@@ -2,3 +2,4 @@
 /api/wallet/new-address /.netlify/functions/new-address 200
 /api/tx/send /.netlify/functions/tx-send 200
 /api/network/status /.netlify/functions/network-status 200
+/api/seed/backup /.netlify/functions/seed-backup 200

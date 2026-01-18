@@ -89,9 +89,7 @@ exports.handler = async () => {
       }
     }
 
-    const seedWords = process.env.WALLET_SEED_WORDS
-      ? process.env.WALLET_SEED_WORDS.split(/\s+/).filter(Boolean)
-      : [];
+    const seedStrategy = process.env.WALLET_SEED_STRATEGY === "in_app" ? "in_app" : "external";
 
     return {
       statusCode: 200,
@@ -100,7 +98,7 @@ exports.handler = async () => {
         pending,
         lastMovement,
         addresses,
-        seedWords,
+        seedStrategy,
         history: (transactions || []).map(formatTx),
         utxos,
       }),

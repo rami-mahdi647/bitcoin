@@ -48,12 +48,14 @@ const newAddressButton = document.getElementById("new-address");
 const receiveStatus = document.getElementById("receive-status");
 const receiveAmountInput = document.getElementById("receive-amount");
 
+const seedSection = document.getElementById("seed-section");
 const seedBox = document.getElementById("seed-phrase");
 const toggleSeedButton = document.getElementById("toggle-seed");
 const backupSeedButton = document.getElementById("backup-seed");
 const seedStatus = document.getElementById("seed-status");
 
 let seedVisible = false;
+let seedWordsCache = [];
 
 const formatBtc = (value) => `${Number(value || 0).toFixed(4)} BTC`;
 
@@ -472,23 +474,144 @@ newAddressButton.addEventListener("click", async () => {
 });
 
 const renderSeed = () => {
+  if (!seedSection || !seedBox || !toggleSeedButton || !backupSeedButton || !seedStatus) {
+    return;
+  }
+
+  if (walletState.status !== "ready") {
+    seedSection.hidden = false;
+    seedBox.textContent = "Cargando estado de la seed...";
+    toggleSeedButton.disabled = true;
+    backupSeedButton.disabled = true;
+    return;
+  }
+
   const data = getWalletData();
-  if (!data.seedWords.length) {
-    seedBox.textContent = "Seed no disponible";
+  if (data.seedStrategy !== "in_app") {
+    seedWordsCache = [];
+    seedVisible = false;
+    seedSection.hidden = true;
+    return;
+  }
+
+  seedSection.hidden = false;
+  toggleSeedButton.disabled = false;
+  backupSeedButton.disabled = false;
+
+  if (!seedWordsCache.length) {
+    seedBox.textContent = "Seed protegida. Usa el respaldo cifrado para almacenarla.";
+    seedVisible = false;
     toggleSeedButton.textContent = "Mostrar seed";
     return;
   }
-  seedBox.textContent = seedVisible ? data.seedWords.join(" ") : "•••• •••• •••• •••• •••• ••••";
+
+  seedBox.textContent = seedVisible ? seedWordsCache.join(" ") : "•••• •••• •••• •••• •••• ••••";
   toggleSeedButton.textContent = seedVisible ? "Ocultar seed" : "Mostrar seed";
 };
 
+const requestSeedCredentials = () => {
+  const confirmed = window.confirm(
+    "Estás por acceder al seed. Hazlo sólo en un entorno seguro. ¿Deseas continuar?",
+  );
+  if (!confirmed) {
+    return null;
+  }
+
+  const confirmation = window.prompt('Escribe "RESPALDAR" para confirmar la acción.');
+  if (!confirmation || confirmation.trim().toUpperCase() !== "RESPALDAR") {
+    seedStatus.textContent = "Confirmación cancelada.";
+    return null;
+  }
+
+  const password = window.prompt("Define una contraseña fuerte (mínimo 10 caracteres).");
+  if (!password || password.trim().length < 10) {
+    seedStatus.textContent = "Contraseña inválida.";
+    return null;
+  }
+
+  const passwordRepeat = window.prompt("Repite la contraseña para continuar.");
+  if (!passwordRepeat || passwordRepeat !== password) {
+    seedStatus.textContent = "Las contraseñas no coinciden.";
+    return null;
+  }
+
+  return { confirmation: confirmation.trim(), password: password.trim() };
+};
+
 toggleSeedButton.addEventListener("click", () => {
-  seedVisible = !seedVisible;
-  renderSeed();
+  if (seedVisible) {
+    seedVisible = false;
+    seedWordsCache = [];
+    renderSeed();
+    seedStatus.textContent = "Seed ocultada.";
+    return;
+  }
+
+  const credentials = requestSeedCredentials();
+  if (!credentials) {
+    return;
+  }
+
+  seedStatus.textContent = "Validando acceso...";
+  fetch("/api/seed/backup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...credentials, mode: "reveal" }),
+  })
+    .then(async (response) => {
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload?.error || "No se pudo revelar la seed.");
+      }
+      seedWordsCache = Array.isArray(payload.seedWords) ? payload.seedWords : [];
+      seedVisible = true;
+      renderSeed();
+      seedStatus.textContent = "Seed revelada temporalmente. Ocúltala al terminar.";
+    })
+    .catch((error) => {
+      seedStatus.textContent =
+        error instanceof Error ? error.message : "No se pudo revelar la seed.";
+    });
 });
 
 backupSeedButton.addEventListener("click", () => {
-  seedStatus.textContent = "Respaldo iniciado. Guarda el archivo cifrado en un lugar seguro.";
+  const credentials = requestSeedCredentials();
+  if (!credentials) {
+    return;
+  }
+
+  seedStatus.textContent = "Generando respaldo cifrado...";
+  fetch("/api/seed/backup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...credentials, mode: "export" }),
+  })
+    .then(async (response) => {
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload?.error || "No se pudo generar el respaldo.");
+      }
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `seed-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      seedStatus.textContent = "Respaldo generado. Guarda el archivo cifrado con cuidado.";
+    })
+    .catch((error) => {
+      seedStatus.textContent =
+        error instanceof Error ? error.message : "No se pudo generar el respaldo.";
+    });
 });
 
 const formatChainLabel = (chain) => {
