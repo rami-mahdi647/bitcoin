@@ -60,6 +60,14 @@ let seedWordsCache = [];
 
 const formatBtc = (value) => `${Number(value || 0).toFixed(4)} BTC`;
 
+const setTooltip = (element, text) => {
+  if (!element) {
+    return;
+  }
+  element.title = text;
+  element.dataset.tooltip = text;
+};
+
 const isRpcConfigError = (message) =>
   typeof message === "string" && message.includes("BITCOIN_RPC");
 
@@ -428,7 +436,7 @@ sendForm.addEventListener("submit", async (event) => {
     if (payload.mempool?.bytes) {
       const mempoolValue = (payload.mempool.bytes / 1e6).toFixed(1);
       mempool.textContent = `${mempoolValue} MB`;
-      mempool.title = `${mempoolValue} MB · tamaño del mempool en MB`;
+      setTooltip(mempool, `${mempoolValue} MB · tamaño del mempool en MB`);
     }
 
     formStatus.textContent = `Transacción ${payload.txid || ""} enviada (${payload.status || "pendiente"}).`;
@@ -659,8 +667,8 @@ const renderNetwork = () => {
     latency.textContent = "—";
     mempool.textContent = "—";
     nextBlock.textContent = "—";
-    latency.title = "No disponible";
-    mempool.title = "No disponible";
+    setTooltip(latency, "No disponible");
+    setTooltip(mempool, "No disponible");
     if (peersInbound) {
       peersInbound.textContent = "Entrantes: —";
     }
@@ -690,8 +698,8 @@ const renderNetwork = () => {
     latency.textContent = "—";
     mempool.textContent = "—";
     nextBlock.textContent = "—";
-    latency.title = "No disponible";
-    mempool.title = "No disponible";
+    setTooltip(latency, "No disponible");
+    setTooltip(mempool, "No disponible");
     if (peersInbound) {
       peersInbound.textContent = "Entrantes: —";
     }
@@ -736,9 +744,14 @@ const renderNetwork = () => {
   syncPercent.textContent = syncDisplay === "—" ? "—" : `${syncDisplay}%`;
   latency.textContent = latencyValue !== null ? `${latencyValue} ms` : "—";
   mempool.textContent = mempoolValue !== null ? `${mempoolValue} MB` : "—";
-  latency.title =
-    latencyValue !== null ? `${latencyValue} ${latencyTooltipBase}` : "No disponible";
-  mempool.title = mempoolValue !== null ? `${mempoolValue} MB · ${mempoolTooltipBase}` : "No disponible";
+  setTooltip(
+    latency,
+    latencyValue !== null ? `${latencyValue} ${latencyTooltipBase}` : "No disponible"
+  );
+  setTooltip(
+    mempool,
+    mempoolValue !== null ? `${mempoolValue} MB · ${mempoolTooltipBase}` : "No disponible"
+  );
   nextBlock.textContent = `~${nextBlockMinutes} min`;
   if (peersInbound) {
     peersInbound.textContent = `Entrantes: ${inboundPeers !== null ? inboundPeers : "—"}`;

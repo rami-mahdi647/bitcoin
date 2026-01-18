@@ -431,6 +431,62 @@
         color: var(--muted);
       }
 
+      .network-card {
+        overflow: visible;
+      }
+
+      .metric-tooltip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text);
+        cursor: help;
+      }
+
+      .metric-tooltip::before,
+      .metric-tooltip::after {
+        position: absolute;
+        left: 50%;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -4px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      .metric-tooltip::before {
+        content: "";
+        bottom: calc(100% + 4px);
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: rgba(15, 22, 40, 0.95) transparent transparent transparent;
+      }
+
+      .metric-tooltip::after {
+        content: attr(data-tooltip);
+        bottom: calc(100% + 10px);
+        padding: 8px 10px;
+        border-radius: 10px;
+        background: rgba(15, 22, 40, 0.95);
+        border: 1px solid rgba(123, 231, 255, 0.25);
+        color: var(--text);
+        font-size: 0.78rem;
+        line-height: 1.35;
+        min-width: 160px;
+        max-width: 220px;
+        text-align: center;
+        z-index: 10;
+        white-space: normal;
+      }
+
+      .metric-tooltip:focus::before,
+      .metric-tooltip:focus::after,
+      .metric-tooltip:hover::before,
+      .metric-tooltip:hover::after {
+        opacity: 1;
+        transform: translate(-50%, -10px);
+      }
+
       .network-progress {
         display: flex;
         align-items: center;
@@ -661,7 +717,7 @@
           <ul class="history" id="history-list"></ul>
         </section>
 
-        <section class="card">
+        <section class="card network-card">
           <h2>Estado de red</h2>
           <div class="network-grid" id="network-grid">
             <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
@@ -674,11 +730,31 @@
             </div>
             <div class="network-row">
               <span>Latencia media</span>
-              <strong><span id="latency" title="No disponible">182 ms</span></strong>
+              <strong>
+                <span
+                  id="latency"
+                  class="metric-tooltip"
+                  title="No disponible"
+                  data-tooltip="No disponible"
+                  tabindex="0"
+                >
+                  182 ms
+                </span>
+              </strong>
             </div>
             <div class="network-row">
               <span>MemPool</span>
-              <strong><span id="mempool" title="No disponible">123 MB</span></strong>
+              <strong>
+                <span
+                  id="mempool"
+                  class="metric-tooltip"
+                  title="No disponible"
+                  data-tooltip="No disponible"
+                  tabindex="0"
+                >
+                  123 MB
+                </span>
+              </strong>
             </div>
             <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
           </div>
