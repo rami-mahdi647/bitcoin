@@ -511,6 +511,10 @@
             <button class="toolbar-button" type="button">Recibir</button>
             <button class="toolbar-button" type="button">Transacciones</button>
             <button class="toolbar-button" type="button">Red</button>
+            <button class="toolbar-button" type="button">Seguridad</button>
+            <button class="toolbar-button" type="button">Minería</button>
+            <button class="toolbar-button" type="button">Contratos</button>
+            <button class="toolbar-button" type="button">CoinJoin</button>
           </div>
           <div class="toolbar-status" aria-label="Estado del nodo">
             <span class="status-chip success" id="network-status">Mainnet · Sincronizado</span>
@@ -529,6 +533,10 @@
                 <li class="nav-item">Recibir</li>
                 <li class="nav-item">Transacciones</li>
                 <li class="nav-item">Red</li>
+                <li class="nav-item">Seguridad</li>
+                <li class="nav-item">Minería</li>
+                <li class="nav-item">Contratos</li>
+                <li class="nav-item">CoinJoin</li>
               </ul>
             </div>
             <div>
@@ -625,8 +633,19 @@
                   <div>
                     <button class="btn btn-primary" type="submit">Enviar</button>
                     <button class="btn btn-secondary" type="button" id="estimate">Simular confirmación</button>
+                    <button class="btn" type="button">Guardar borrador</button>
                   </div>
                 </form>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Recepción y actividad</h2>
+                  <div class="panel-subtitle">Sub-vista para recibir pagos y revisar movimientos.</div>
+                </div>
+                <div class="status-message">Cola de operaciones: estable.</div>
               </div>
 
               <div class="panel-section" aria-label="Recepción">
@@ -707,6 +726,16 @@
                 <div class="section-title">Actividad reciente</div>
                 <ul class="history" id="history-list"></ul>
               </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Red y sincronización</h2>
+                  <div class="panel-subtitle">Panel clásico para métricas de nodo y progreso.</div>
+                </div>
+                <div class="status-message">Estado en línea.</div>
+              </div>
 
               <div class="panel-section" aria-label="Estado de red">
                 <div class="section-title">Estado de red</div>
@@ -724,6 +753,137 @@
                   <div class="network-row"><span>MemPool</span><strong id="mempool">123 MB</strong></div>
                   <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
                 </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Seguridad y respaldo</h2>
+                  <div class="panel-subtitle">Sub-vista clásica para protección de seed y copias.</div>
+                </div>
+                <div class="status-message">Acciones sensibles protegidas.</div>
+              </div>
+
+              <div class="panel-section" id="seed-section" aria-label="Respaldo de seed">
+                <div class="section-title">Seed en aplicación</div>
+                <div class="summary-card">
+                  <span>Estado del respaldo</span>
+                  <strong>Control cifrado disponible</strong>
+                  <div class="balance-card">
+                    <div>
+                      <div class="helper">Frase semilla</div>
+                      <code id="seed-phrase">•••• •••• •••• •••• •••• ••••</code>
+                    </div>
+                    <div>
+                      <button class="btn btn-secondary" type="button" id="toggle-seed">
+                        Mostrar seed
+                      </button>
+                      <button class="btn btn-primary" type="button" id="backup-seed">
+                        Respaldar cifrado
+                      </button>
+                    </div>
+                    <div class="status-message" id="seed-status">
+                      Confirma tu identidad antes de revelar la seed.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Operaciones avanzadas</h2>
+                  <div class="panel-subtitle">Sub-vistas clásicas para minería, contratos y CoinJoin.</div>
+                </div>
+                <div class="status-message">Herramientas expertas listas.</div>
+              </div>
+
+              <div class="panel-section" aria-label="Minería asistida">
+                <div class="section-title">Minería asistida</div>
+                <form class="form" id="mining-form" novalidate>
+                  <div class="field">
+                    <label for="mining-pool">Pool preferido</label>
+                    <input id="mining-pool" name="mining-pool" type="url" placeholder="stratum+tcp://pool.nexos" />
+                  </div>
+                  <div class="field">
+                    <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
+                    <input id="mining-hashrate" name="mining-hashrate" type="number" min="0" step="0.1" />
+                  </div>
+                  <div class="field">
+                    <label for="mining-payout">Dirección de cobro</label>
+                    <input id="mining-payout" name="mining-payout" type="text" placeholder="nx1q..." />
+                  </div>
+                  <div class="status-message" id="mining-status">Configura parámetros antes de activar.</div>
+                  <div>
+                    <button class="btn btn-primary" type="submit">Activar minería</button>
+                    <button class="btn btn-secondary" type="button">Guardar preset</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-section" aria-label="Contratos programables">
+                <div class="section-title">Contratos programables</div>
+                <form class="form" id="contracts-form" novalidate>
+                  <div class="field">
+                    <label for="contracts-template">Plantilla base</label>
+                    <textarea
+                      id="contracts-template"
+                      name="contracts-template"
+                      placeholder="Cláusula de pago condicional..."
+                    ></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="contracts-amount">Monto (NEX)</label>
+                    <input id="contracts-amount" name="contracts-amount" type="number" min="0" step="0.0001" />
+                  </div>
+                  <div class="field">
+                    <label for="contracts-expiry">Vencimiento</label>
+                    <input id="contracts-expiry" name="contracts-expiry" type="date" />
+                  </div>
+                  <div class="status-message" id="contracts-status">Genera un borrador antes de firmar.</div>
+                  <div>
+                    <button class="btn btn-primary" type="submit">Crear borrador</button>
+                    <button class="btn btn-secondary" type="button">Guardar plantilla</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-section" aria-label="CoinJoin coordinado">
+                <div class="section-title">CoinJoin coordinado</div>
+                <form class="form" id="coinjoin-form" novalidate>
+                  <div class="field">
+                    <label for="coinjoin-inputs">Inputs (UTXOs)</label>
+                    <textarea
+                      id="coinjoin-inputs"
+                      name="coinjoin-inputs"
+                      placeholder="txid:vout, una línea por entrada"
+                    ></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="coinjoin-outputs">Outputs deseados</label>
+                    <textarea
+                      id="coinjoin-outputs"
+                      name="coinjoin-outputs"
+                      placeholder="Direcciones destino, una por línea"
+                    ></textarea>
+                  </div>
+                  <div class="field">
+                    <label for="coinjoin-rounds">Rondas</label>
+                    <select id="coinjoin-rounds" name="coinjoin-rounds">
+                      <option value="1">1 ronda</option>
+                      <option value="2">2 rondas</option>
+                      <option value="3">3 rondas</option>
+                      <option value="4">4 rondas</option>
+                    </select>
+                  </div>
+                  <div class="status-message" id="coinjoin-status">Define entradas, salidas y rondas.</div>
+                  <div>
+                    <button class="btn btn-primary" type="submit">Iniciar CoinJoin</button>
+                    <button class="btn btn-secondary" type="button">Prevalidar</button>
+                  </div>
+                </form>
               </div>
             </div>
           </section>
