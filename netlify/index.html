@@ -384,9 +384,10 @@
       }
 
       .status-message {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--muted);
         min-height: 18px;
+        line-height: 1.4;
       }
 
       .status-message.is-success {
@@ -994,6 +995,9 @@
 
               <section class="panel">
                 <h2>Minería y operación del rig</h2>
+                <div class="helper">
+                  Configura el pool, la capacidad del rig y la dirección de cobro principal.
+                </div>
                 <form class="form" id="mining-form" novalidate>
                   <div class="field">
                     <label for="mining-pool">Pool o nodo de minería</label>
@@ -1034,7 +1038,7 @@
                     <button class="btn btn-primary" type="submit">Activar monitoreo</button>
                     <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
-                  <div class="status-message" id="mining-status">
+                  <div class="status-message helper" id="mining-status">
                     Configura el pool y los parámetros del rig para iniciar métricas.
                   </div>
                 </form>
@@ -1042,6 +1046,9 @@
 
               <section class="panel">
                 <h2>Contratos y scripts de custodia</h2>
+                <div class="helper">
+                  Diseña plantillas de custodia con montos, vencimientos y firmantes definidos.
+                </div>
                 <form class="form" id="contracts-form" novalidate>
                   <div class="field">
                     <label for="contracts-template">Plantilla de contrato</label>
@@ -1074,7 +1081,7 @@
                     <button class="btn btn-primary" type="submit">Crear borrador técnico</button>
                     <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
-                  <div class="status-message" id="contracts-status">
+                  <div class="status-message helper" id="contracts-status">
                     Prepara una plantilla clara y revisa el script antes de firmar.
                   </div>
                 </form>
@@ -1082,6 +1089,9 @@
 
               <section class="panel">
                 <h2>CoinJoin y privacidad avanzada</h2>
+                <div class="helper">
+                  Coordina entradas, salidas y rondas para maximizar la privacidad del mix.
+                </div>
                 <form class="form" id="coinjoin-form" novalidate>
                   <div class="field">
                     <label for="coinjoin-inputs">Inputs seleccionados</label>
@@ -1116,7 +1126,7 @@
                     <button class="btn btn-primary" type="submit">Coordinar sesión</button>
                     <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
-                  <div class="status-message" id="coinjoin-status">
+                  <div class="status-message helper" id="coinjoin-status">
                     Selecciona inputs y outputs antes de coordinar el mix.
                   </div>
                 </form>
