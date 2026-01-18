@@ -3,3 +3,6 @@
 /api/tx/send /.netlify/functions/tx-send 200
 /api/network/status /.netlify/functions/network-status 200
 /api/seed/backup /.netlify/functions/seed-backup 200
+/api/mining /.netlify/functions/mining 200
+/api/contracts /.netlify/functions/contracts 200
+/api/coinjoin /.netlify/functions/coinjoin 200

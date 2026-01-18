@@ -19,6 +19,15 @@ Optional:
 
 - `BITCOIN_RPC_WALLET` (wallet name appended to the URL when using host/port)
 
+## Optional environment variables for new endpoints
+
+The new mock endpoints for mining, contracts, and CoinJoin do not require additional secrets.
+If you want to label the mode shown in the UI responses, set:
+
+- `MINING_MODE` (default: `mock`)
+- `CONTRACTS_MODE` (default: `mock`)
+- `COINJOIN_MODE` (default: `mock`)
+
 ## RPC connectivity requirement
 
 Netlify must be able to reach the Bitcoin Core RPC endpoint over the network (publicly accessible or via an approved tunnel/VPN). A local-only node on your workstation will not be reachable from Netlify.
