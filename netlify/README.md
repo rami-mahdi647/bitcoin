@@ -2,6 +2,15 @@
 
 This folder contains the Netlify frontend and serverless functions used by the demo wallet UI.
 
+## Manual UI checks
+
+Use these steps to verify tab navigation and panel visibility:
+
+1. Open `netlify/index.html` in a browser (or run the Netlify dev server).
+2. Click each tab in the top toolbar (Resumen, Enviar, Recibir, Transacciones, Red, Seguridad, Minería, Contratos, CoinJoin).
+3. Confirm only the matching panel is visible and the rest are hidden.
+4. Repeat the same clicks using the sidebar list to ensure both navigation areas stay in sync.
+
 ## Required environment variables
 
 The Netlify Functions expect access to a Bitcoin Core JSON-RPC endpoint that is reachable from Netlify.

@@ -506,15 +506,27 @@
 
         <div class="toolbar">
           <div class="toolbar-tabs" role="tablist" aria-label="Tabs principales">
-            <button class="toolbar-button active" type="button">Resumen</button>
-            <button class="toolbar-button" type="button">Enviar</button>
-            <button class="toolbar-button" type="button">Recibir</button>
-            <button class="toolbar-button" type="button">Transacciones</button>
-            <button class="toolbar-button" type="button">Red</button>
-            <button class="toolbar-button" type="button">Seguridad</button>
-            <button class="toolbar-button" type="button">Minería</button>
-            <button class="toolbar-button" type="button">Contratos</button>
-            <button class="toolbar-button" type="button">CoinJoin</button>
+            <button class="toolbar-button active" type="button" data-tab="resumen" aria-controls="panel-resumen">
+              Resumen
+            </button>
+            <button class="toolbar-button" type="button" data-tab="enviar" aria-controls="panel-enviar">Enviar</button>
+            <button class="toolbar-button" type="button" data-tab="recibir" aria-controls="panel-recibir">Recibir</button>
+            <button class="toolbar-button" type="button" data-tab="transacciones" aria-controls="panel-transacciones">
+              Transacciones
+            </button>
+            <button class="toolbar-button" type="button" data-tab="red" aria-controls="panel-red">Red</button>
+            <button class="toolbar-button" type="button" data-tab="seguridad" aria-controls="panel-seguridad">
+              Seguridad
+            </button>
+            <button class="toolbar-button" type="button" data-tab="mineria" aria-controls="panel-mineria">
+              Minería
+            </button>
+            <button class="toolbar-button" type="button" data-tab="contratos" aria-controls="panel-contratos">
+              Contratos
+            </button>
+            <button class="toolbar-button" type="button" data-tab="coinjoin" aria-controls="panel-coinjoin">
+              CoinJoin
+            </button>
           </div>
           <div class="toolbar-status" aria-label="Estado del nodo">
             <span class="status-chip success" id="network-status">Mainnet · Sincronizado</span>
@@ -528,15 +540,15 @@
             <div>
               <div class="sidebar-title">Tabs</div>
               <ul class="nav-list">
-                <li class="nav-item active">Resumen</li>
-                <li class="nav-item">Enviar</li>
-                <li class="nav-item">Recibir</li>
-                <li class="nav-item">Transacciones</li>
-                <li class="nav-item">Red</li>
-                <li class="nav-item">Seguridad</li>
-                <li class="nav-item">Minería</li>
-                <li class="nav-item">Contratos</li>
-                <li class="nav-item">CoinJoin</li>
+                <li class="nav-item active" data-tab="resumen" aria-controls="panel-resumen">Resumen</li>
+                <li class="nav-item" data-tab="enviar" aria-controls="panel-enviar">Enviar</li>
+                <li class="nav-item" data-tab="recibir" aria-controls="panel-recibir">Recibir</li>
+                <li class="nav-item" data-tab="transacciones" aria-controls="panel-transacciones">Transacciones</li>
+                <li class="nav-item" data-tab="red" aria-controls="panel-red">Red</li>
+                <li class="nav-item" data-tab="seguridad" aria-controls="panel-seguridad">Seguridad</li>
+                <li class="nav-item" data-tab="mineria" aria-controls="panel-mineria">Minería</li>
+                <li class="nav-item" data-tab="contratos" aria-controls="panel-contratos">Contratos</li>
+                <li class="nav-item" data-tab="coinjoin" aria-controls="panel-coinjoin">CoinJoin</li>
               </ul>
             </div>
             <div>
@@ -551,7 +563,7 @@
           </aside>
 
           <section class="main-area">
-            <div class="panel">
+            <div class="panel" id="panel-resumen" data-panel="resumen">
               <div class="panel-header">
                 <div>
                   <h2>Panel principal</h2>
@@ -589,6 +601,16 @@
                     <div class="helper">hace 12 min · 3/6 confirmaciones</div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-enviar" data-panel="enviar" hidden>
+              <div class="panel-header">
+                <div>
+                  <h2>Enviar fondos</h2>
+                  <div class="panel-subtitle">Preparar transacciones con validaciones rápidas.</div>
+                </div>
+                <div class="status-message">Listo para firmar y transmitir.</div>
               </div>
 
               <div class="panel-section" aria-label="Acciones rápidas">
@@ -639,7 +661,7 @@
               </div>
             </div>
 
-            <div class="panel">
+            <div class="panel" id="panel-recibir" data-panel="recibir" hidden>
               <div class="panel-header">
                 <div>
                   <h2>Recepción y actividad</h2>
@@ -682,6 +704,16 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-transacciones" data-panel="transacciones" hidden>
+              <div class="panel-header">
+                <div>
+                  <h2>Historial de transacciones</h2>
+                  <div class="panel-subtitle">Seguimiento detallado de movimientos y actividad reciente.</div>
+                </div>
+                <div class="status-message">Cola de operaciones: estable.</div>
               </div>
 
               <div class="panel-section" aria-label="Transacciones recientes">
@@ -728,7 +760,7 @@
               </div>
             </div>
 
-            <div class="panel">
+            <div class="panel" id="panel-red" data-panel="red" hidden>
               <div class="panel-header">
                 <div>
                   <h2>Red y sincronización</h2>
@@ -756,7 +788,7 @@
               </div>
             </div>
 
-            <div class="panel">
+            <div class="panel" id="panel-seguridad" data-panel="seguridad" hidden>
               <div class="panel-header">
                 <div>
                   <h2>Seguridad y respaldo</h2>
@@ -791,11 +823,11 @@
               </div>
             </div>
 
-            <div class="panel">
+            <div class="panel" id="panel-mineria" data-panel="mineria" hidden>
               <div class="panel-header">
                 <div>
-                  <h2>Operaciones avanzadas</h2>
-                  <div class="panel-subtitle">Sub-vistas clásicas para minería, contratos y CoinJoin.</div>
+                  <h2>Minería asistida</h2>
+                  <div class="panel-subtitle">Configura parámetros para operaciones de minado.</div>
                 </div>
                 <div class="status-message">Herramientas expertas listas.</div>
               </div>
@@ -821,6 +853,16 @@
                     <button class="btn btn-secondary" type="button">Guardar preset</button>
                   </div>
                 </form>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-contratos" data-panel="contratos" hidden>
+              <div class="panel-header">
+                <div>
+                  <h2>Contratos programables</h2>
+                  <div class="panel-subtitle">Define plantillas y montos antes de firmar.</div>
+                </div>
+                <div class="status-message">Herramientas expertas listas.</div>
               </div>
 
               <div class="panel-section" aria-label="Contratos programables">
@@ -848,6 +890,16 @@
                     <button class="btn btn-secondary" type="button">Guardar plantilla</button>
                   </div>
                 </form>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-coinjoin" data-panel="coinjoin" hidden>
+              <div class="panel-header">
+                <div>
+                  <h2>CoinJoin coordinado</h2>
+                  <div class="panel-subtitle">Prepara entradas y salidas antes de coordinar.</div>
+                </div>
+                <div class="status-message">Herramientas expertas listas.</div>
               </div>
 
               <div class="panel-section" aria-label="CoinJoin coordinado">
