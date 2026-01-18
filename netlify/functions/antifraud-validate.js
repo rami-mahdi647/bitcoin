@@ -2,6 +2,8 @@ const DEFAULT_THRESHOLD = 0.7;
 const DEFAULT_TIMEOUT_MS = 4500;
 const MODEL_COUNT = 32;
 
+const { blendWithMesh, collectMeshSignals } = require("./lib/antifraud-mesh");
+
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 
 const parseBody = (body) => {
@@ -188,18 +190,36 @@ exports.handler = async (event) => {
   try {
     const externalResult = await callExternalService(transaction, threshold);
     const result = externalResult || runLocalEnsemble(transaction, threshold);
-    const decision = result.decision === "approve" ? "approve" : "reject";
+    const meshResult = await collectMeshSignals({ transaction, threshold });
+    const meshBlend = blendWithMesh({ localScore: result.score, meshResult });
+    const finalScore = meshBlend.combinedScore;
+    const decision = finalScore >= threshold ? "reject" : "approve";
+    const meshDecision = meshBlend.meshDecision;
+    const meshDiscrepancies = meshBlend.discrepancies || [];
+    const meshNote = meshResult
+      ? ` Malla: ${meshDecision || "sin decisión"} (${
+          meshResult.participants || 0
+        } nodos).`
+      : "";
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        score: result.score,
+        score: finalScore,
         decision,
-        reason: result.reason,
+        reason: `${result.reason}${meshNote}`,
         threshold,
         modelCount: result.modelCount,
         modelVersion: result.modelVersion,
         signals: result.signals,
+        mesh: meshResult
+          ? {
+              decision: meshDecision,
+              score: meshResult.score,
+              participants: meshResult.participants,
+              discrepancies: meshDiscrepancies,
+            }
+          : null,
         policy: {
           threshold,
           mode: externalResult ? "external" : "local",
