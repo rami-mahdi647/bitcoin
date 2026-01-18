@@ -93,6 +93,90 @@ The antifraud validation forwards transaction metadata (address, amount, fee rat
 configured ML service. Ensure you have a privacy policy in place for any external processing and set
 `ANTIFRAUD_RETENTION_DAYS` to match your retention commitments.
 
+## Antifraud mesh signal exchange protocol
+
+This protocol defines how internal antifraud signals are exchanged between peers or with an
+aggregator. Messages are compact for real-time scoring and can be encoded as JSON (debug/ops) or
+CBOR (binary, production). Required fields are identical across encodings.
+
+### Message schema (JSON/CBOR)
+
+```json
+{
+  "version": "1.0",
+  "modelId": "ensemble-32-v3",
+  "requestId": "req_01HZX9E2B9ZP0VZB2MZ2G6PX7Q",
+  "signalVector": [0.14, 0.91, 0.02, 0.33],
+  "confidence": 0.84,
+  "timestamp": "2024-05-19T20:19:03.221Z",
+  "nonce": "b5d15f1a-36c8-4f18-8a91-5ed2de0a2f2a",
+  "metadata": {
+    "network": "mainnet",
+    "peerId": "mesh-node-07",
+    "featureVersion": "fv3"
+  }
+}
+```
+
+**Required fields**
+
+- `version`: Semantic version of the protocol (string, e.g. `1.0`).
+- `modelId`: Unique model/ensemble identifier (string).
+- `requestId`: Correlates signals across peers and the decision path (string).
+- `signalVector`: Ordered numeric vector; length agreed by `modelId` (array of floats).
+- `confidence`: 0.0–1.0 confidence score for the local model (float).
+- `timestamp`: ISO 8601 UTC timestamp of emission (string).
+- `nonce`: Unique per-message nonce for replay protection (string/uuid or 96-bit random).
+
+**Optional fields**
+
+- `metadata`: Extra fields for routing and auditing (object).
+- `signature`: Detached Ed25519 signature over the canonical payload (base64).
+
+### Versioning and size limits
+
+- **Versioning:** `version` is semver. Backwards-compatible additions should not change existing
+  field meaning. Breaking changes bump the major version (`2.0`).
+- **Size limits:** enforce 8 KB maximum per message (after encoding). Recommended:
+  `signalVector.length <= 256`, `metadata` <= 2 KB, and `requestId` <= 64 bytes.
+
+### Transport selection
+
+- **P2P mesh:** prefer **WebRTC** (data channels) or **QUIC** for low-latency peer discovery and
+  NAT traversal.
+- **Centralized aggregator:** use **gRPC over HTTPS** for streaming and fan-in/fan-out.
+
+### Encryption + signing (end-to-end)
+
+- **Key agreement:** X25519 (NaCl/libsodium).
+- **Payload encryption:** ChaCha20-Poly1305 with a random 96-bit nonce per message.
+- **Signatures:** Ed25519 over the canonicalized payload (before encryption) to prevent tampering.
+- **Replay protection:** reject duplicate nonces per `(requestId, modelId)` within a sliding window.
+
+### Validation flow
+
+```
+broadcast (peer emits signal)
+        |
+        v
+quorum (collect N-of-M valid, signed signals)
+        |
+        v
+aggregation (weighted fusion of signalVector + confidence)
+        |
+        v
+decision (approve / review / reject)
+```
+
+### Mesh-related environment variables
+
+Configure the antifraud mesh in the Netlify function environment:
+
+- `ANTIFRAUD_MESH_ENDPOINT` (mesh or aggregator endpoint URL)
+- `ANTIFRAUD_MESH_PUBLIC_KEY` (Ed25519 public key, base64/hex)
+- `ANTIFRAUD_MESH_PRIVATE_KEY` (Ed25519 private key, base64/hex; keep secret)
+- `ANTIFRAUD_MESH_TIMEOUT_MS` (timeout in ms for mesh requests)
+
 ## RPC connectivity requirement
 
 Netlify must be able to reach the Bitcoin Core RPC endpoint over the network (publicly accessible or via an approved tunnel/VPN). A local-only node on your workstation will not be reachable from Netlify.
