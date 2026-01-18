@@ -18,6 +18,15 @@ Also set RPC credentials:
 Optional:
 
 - `BITCOIN_RPC_WALLET` (wallet name appended to the URL when using host/port)
+- `BITCOIN_NETWORK` (network label for antifraud metadata, default: `mainnet`)
+
+## Seed backup endpoint variables
+
+The seed backup endpoint (`/api/seed/backup`) can return a mocked seed for demo purposes. Configure
+how the seed is sourced:
+
+- `WALLET_SEED_STRATEGY` (`in_app` to return a mocked seed, anything else to omit seed words)
+- `WALLET_SEED_WORDS` (optional, space-separated seed words returned when `WALLET_SEED_STRATEGY=in_app`)
 
 ## Optional environment variables for new endpoints
 
