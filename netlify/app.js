@@ -386,6 +386,33 @@ const simulateEstimate = () => {
   formStatus.textContent = `Tiempo estimado de confirmación: ${eta}.`;
 };
 
+const formatRiskScore = (score) => {
+  if (!Number.isFinite(score)) {
+    return "—";
+  }
+  return `${(score * 100).toFixed(1)}%`;
+};
+
+const requestAntifraudValidation = async ({ address, amount, feeRate }) => {
+  const response = await fetch("/api/antifraud/validate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      address,
+      amount,
+      feeRate,
+    }),
+  });
+
+  const payload = await readJsonPayload(response);
+  if (!response.ok) {
+    throw new Error(payload?.error || `Error antifraude (${response.status})`);
+  }
+  return payload;
+};
+
 const copyActiveAddress = async (statusElement) => {
   const data = getWalletData();
   const address = data.addresses[0];
@@ -438,9 +465,26 @@ sendForm.addEventListener("submit", async (event) => {
 
   const amountNumber = Number(amountValue);
   const feeNumber = Number(feeValue);
-  formStatus.textContent = "Construyendo y firmando la transacción...";
+  formStatus.textContent = "Analizando riesgo antifraude...";
 
   try {
+    const antifraud = await requestAntifraudValidation({
+      address: addressValue,
+      amount: amountNumber,
+      feeRate: feeNumber,
+    });
+
+    const threshold = Number(antifraud?.threshold ?? 0.7);
+    const riskScore = Number(antifraud?.score ?? 0);
+    if (antifraud?.decision !== "approve" || riskScore >= threshold) {
+      formStatus.textContent = antifraud?.reason
+        ? `Transacción bloqueada por riesgo alto. ${antifraud.reason}`
+        : "Transacción bloqueada por riesgo alto.";
+      return;
+    }
+
+    formStatus.textContent = `Aprobada por análisis antifraude (${formatRiskScore(riskScore)}). Enviando transacción...`;
+
     const response = await fetch("/api/tx/send", {
       method: "POST",
       headers: {
