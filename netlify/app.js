@@ -55,6 +55,24 @@ const toggleSeedButton = document.getElementById("toggle-seed");
 const backupSeedButton = document.getElementById("backup-seed");
 const seedStatus = document.getElementById("seed-status");
 
+const miningForm = document.getElementById("mining-form");
+const miningPoolInput = document.getElementById("mining-pool");
+const miningHashrateInput = document.getElementById("mining-hashrate");
+const miningPayoutInput = document.getElementById("mining-payout");
+const miningStatus = document.getElementById("mining-status");
+
+const contractsForm = document.getElementById("contracts-form");
+const contractsTemplateInput = document.getElementById("contracts-template");
+const contractsAmountInput = document.getElementById("contracts-amount");
+const contractsExpiryInput = document.getElementById("contracts-expiry");
+const contractsStatus = document.getElementById("contracts-status");
+
+const coinjoinForm = document.getElementById("coinjoin-form");
+const coinjoinInputsInput = document.getElementById("coinjoin-inputs");
+const coinjoinOutputsInput = document.getElementById("coinjoin-outputs");
+const coinjoinRoundsSelect = document.getElementById("coinjoin-rounds");
+const coinjoinStatus = document.getElementById("coinjoin-status");
+
 let seedVisible = false;
 let seedWordsCache = [];
 
@@ -66,6 +84,28 @@ const setTooltip = (element, text) => {
   }
   element.title = text;
   element.dataset.tooltip = text;
+};
+
+const setStatusMessage = (element, message, tone = "neutral") => {
+  if (!element) {
+    return;
+  }
+  element.textContent = message;
+  element.classList.remove("is-success", "is-error");
+  if (tone === "success") {
+    element.classList.add("is-success");
+  }
+  if (tone === "error") {
+    element.classList.add("is-error");
+  }
+};
+
+const readJsonPayload = async (response) => {
+  try {
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
 };
 
 const isRpcConfigError = (message) =>
@@ -643,6 +683,174 @@ backupSeedButton.addEventListener("click", () => {
         error instanceof Error ? error.message : "No se pudo generar el respaldo.";
     });
 });
+
+if (miningForm) {
+  miningForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const poolUrl = miningPoolInput?.value.trim();
+    const hashrate = Number(miningHashrateInput?.value);
+    const payoutAddress = miningPayoutInput?.value.trim();
+
+    if (!poolUrl || !Number.isFinite(hashrate) || hashrate <= 0 || !payoutAddress) {
+      setStatusMessage(
+        miningStatus,
+        "Completa el pool, hashrate y dirección de cobro.",
+        "error",
+      );
+      return;
+    }
+
+    setStatusMessage(miningStatus, "Configurando minería en el backend...");
+
+    try {
+      const response = await fetch("/api/mining", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          poolUrl,
+          hashrate,
+          payoutAddress,
+        }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error || `Error del backend (${response.status})`);
+      }
+
+      setStatusMessage(
+        miningStatus,
+        payload?.message || "Minería activada y monitoreo en curso.",
+        "success",
+      );
+      miningForm.reset();
+    } catch (error) {
+      setStatusMessage(
+        miningStatus,
+        error instanceof Error ? error.message : "No se pudo iniciar la minería.",
+        "error",
+      );
+    }
+  });
+}
+
+if (contractsForm) {
+  contractsForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const template = contractsTemplateInput?.value.trim();
+    const amount = Number(contractsAmountInput?.value);
+    const expiry = contractsExpiryInput?.value;
+
+    if (!template || !Number.isFinite(amount) || amount <= 0 || !expiry) {
+      setStatusMessage(
+        contractsStatus,
+        "Incluye plantilla, monto válido y fecha de vencimiento.",
+        "error",
+      );
+      return;
+    }
+
+    setStatusMessage(contractsStatus, "Generando borrador del contrato...");
+
+    try {
+      const response = await fetch("/api/contracts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          template,
+          amount,
+          expiry,
+        }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error || `Error del backend (${response.status})`);
+      }
+
+      setStatusMessage(
+        contractsStatus,
+        payload?.message || "Borrador listo para revisión y firma.",
+        "success",
+      );
+      contractsForm.reset();
+    } catch (error) {
+      setStatusMessage(
+        contractsStatus,
+        error instanceof Error ? error.message : "No se pudo crear el contrato.",
+        "error",
+      );
+    }
+  });
+}
+
+if (coinjoinForm) {
+  coinjoinForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const inputsRaw = coinjoinInputsInput?.value.trim();
+    const outputsRaw = coinjoinOutputsInput?.value.trim();
+    const rounds = Number(coinjoinRoundsSelect?.value || 0);
+
+    if (!inputsRaw || !outputsRaw || !Number.isFinite(rounds) || rounds <= 0) {
+      setStatusMessage(
+        coinjoinStatus,
+        "Define inputs, outputs y número de rondas.",
+        "error",
+      );
+      return;
+    }
+
+    const inputs = inputsRaw.split(/[\n,]+/).map((entry) => entry.trim()).filter(Boolean);
+    const outputs = outputsRaw.split(/[\n,]+/).map((entry) => entry.trim()).filter(Boolean);
+
+    if (!inputs.length || !outputs.length) {
+      setStatusMessage(
+        coinjoinStatus,
+        "Agrega al menos un input y un output.",
+        "error",
+      );
+      return;
+    }
+
+    setStatusMessage(coinjoinStatus, "Coordinando sesión CoinJoin...");
+
+    try {
+      const response = await fetch("/api/coinjoin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputs,
+          outputs,
+          rounds,
+        }),
+      });
+      const payload = await readJsonPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error || `Error del backend (${response.status})`);
+      }
+
+      setStatusMessage(
+        coinjoinStatus,
+        payload?.message || "CoinJoin iniciado. Esperando participantes.",
+        "success",
+      );
+      coinjoinForm.reset();
+    } catch (error) {
+      setStatusMessage(
+        coinjoinStatus,
+        error instanceof Error ? error.message : "No se pudo iniciar CoinJoin.",
+        "error",
+      );
+    }
+  });
+}
 
 const formatChainLabel = (chain) => {
   if (chain === "main") {

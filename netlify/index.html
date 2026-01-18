@@ -337,6 +337,20 @@
         line-height: 1.4;
       }
 
+      .status-message {
+        font-size: 0.85rem;
+        color: var(--muted);
+        min-height: 18px;
+      }
+
+      .status-message.is-success {
+        color: var(--accent-3);
+      }
+
+      .status-message.is-error {
+        color: var(--danger);
+      }
+
       .error {
         color: var(--danger);
         font-size: 0.82rem;
@@ -884,6 +898,136 @@
                   Guarda tu seed fuera de línea y nunca la compartas.
                 </div>
               </div>
+            </section>
+
+            <section class="panel">
+              <h2>Minería</h2>
+              <form class="form" id="mining-form" novalidate>
+                <div class="field">
+                  <label for="mining-pool">Pool o nodo de minería</label>
+                  <input
+                    id="mining-pool"
+                    name="mining-pool"
+                    type="url"
+                    placeholder="stratum+tcp://pool.example.com:3333"
+                    required
+                  />
+                  <div class="helper">Define el endpoint para enviar tus shares.</div>
+                </div>
+                <div class="field">
+                  <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
+                  <input
+                    id="mining-hashrate"
+                    name="mining-hashrate"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    placeholder="110.5"
+                    required
+                  />
+                  <div class="helper">Usado para estimar tiempos de producción.</div>
+                </div>
+                <div class="field">
+                  <label for="mining-payout">Dirección de cobro</label>
+                  <input
+                    id="mining-payout"
+                    name="mining-payout"
+                    type="text"
+                    placeholder="bc1q..."
+                    required
+                  />
+                  <div class="helper">Recibirás recompensas en esta dirección.</div>
+                </div>
+                <div class="cta">
+                  <button class="btn btn-primary" type="submit">Activar minería</button>
+                  <button class="btn btn-secondary" type="reset">Limpiar</button>
+                </div>
+                <div class="status-message" id="mining-status">
+                  Configura el pool y los parámetros de tu rig.
+                </div>
+              </form>
+            </section>
+
+            <section class="panel">
+              <h2>Contratos</h2>
+              <form class="form" id="contracts-form" novalidate>
+                <div class="field">
+                  <label for="contracts-template">Plantilla de contrato</label>
+                  <textarea
+                    id="contracts-template"
+                    name="contracts-template"
+                    placeholder="Incluye cláusulas, participantes y condiciones..."
+                    required
+                  ></textarea>
+                  <div class="helper">Base para construir un script y sus firmantes.</div>
+                </div>
+                <div class="field">
+                  <label for="contracts-amount">Monto bloqueado (BTC)</label>
+                  <input
+                    id="contracts-amount"
+                    name="contracts-amount"
+                    type="number"
+                    min="0"
+                    step="0.0001"
+                    placeholder="0.2500"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="contracts-expiry">Vencimiento</label>
+                  <input id="contracts-expiry" name="contracts-expiry" type="date" required />
+                  <div class="helper">Define la fecha límite para liberar fondos.</div>
+                </div>
+                <div class="cta">
+                  <button class="btn btn-primary" type="submit">Crear borrador</button>
+                  <button class="btn btn-secondary" type="reset">Limpiar</button>
+                </div>
+                <div class="status-message" id="contracts-status">
+                  Prepara una plantilla clara antes de solicitar firmas.
+                </div>
+              </form>
+            </section>
+
+            <section class="panel">
+              <h2>CoinJoin</h2>
+              <form class="form" id="coinjoin-form" novalidate>
+                <div class="field">
+                  <label for="coinjoin-inputs">Inputs seleccionados</label>
+                  <textarea
+                    id="coinjoin-inputs"
+                    name="coinjoin-inputs"
+                    placeholder="UTXO1, UTXO2, UTXO3..."
+                    required
+                  ></textarea>
+                  <div class="helper">Lista de UTXOs que participarán en el mix.</div>
+                </div>
+                <div class="field">
+                  <label for="coinjoin-outputs">Outputs objetivo</label>
+                  <textarea
+                    id="coinjoin-outputs"
+                    name="coinjoin-outputs"
+                    placeholder="bc1q..., bc1q..."
+                    required
+                  ></textarea>
+                  <div class="helper">Define las direcciones de salida para el CoinJoin.</div>
+                </div>
+                <div class="field">
+                  <label for="coinjoin-rounds">Rondas de mezcla</label>
+                  <select id="coinjoin-rounds" name="coinjoin-rounds" required>
+                    <option value="2">2 rondas · rápido</option>
+                    <option value="4" selected>4 rondas · equilibrado</option>
+                    <option value="6">6 rondas · privado</option>
+                  </select>
+                  <div class="helper">A mayor cantidad de rondas, más privacidad.</div>
+                </div>
+                <div class="cta">
+                  <button class="btn btn-primary" type="submit">Iniciar CoinJoin</button>
+                  <button class="btn btn-secondary" type="reset">Limpiar</button>
+                </div>
+                <div class="status-message" id="coinjoin-status">
+                  Selecciona inputs y outputs antes de coordinar el mix.
+                </div>
+              </form>
             </section>
 
             <section class="panel">
