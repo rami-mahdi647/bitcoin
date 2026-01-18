@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bitcoin Core 25.0 · UI clásica</title>
+    <title>Satoshi Visión Wallet · Nexos</title>
     <meta
       name="description"
-      content="Maqueta de la interfaz clásica de Bitcoin Core 25.0 con resumen, envío, recepción, transacciones y red." />
+      content="Interfaz clásica de escritorio para Satoshi Visión Wallet · Nexos con panel principal, tabla de transacciones y secciones de red." />
     <style>
       :root {
         color-scheme: light;
@@ -203,23 +203,39 @@
         background: #f9f9f9;
       }
 
-      .view-title {
-        font-size: 1rem;
-        color: #222;
-        font-weight: 600;
-      }
-
       .panel {
         background: var(--panel);
         border: 1px solid var(--panel-border);
         border-radius: 10px;
         padding: 16px;
         display: grid;
+        gap: 16px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         gap: 12px;
       }
 
-      .panel h2 {
-        font-size: 0.95rem;
+      .panel-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+      }
+
+      .panel-subtitle {
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .panel-section {
+        display: grid;
+        gap: 12px;
+      }
+
+      .section-title {
+        font-size: 0.9rem;
         font-weight: 600;
       }
 
@@ -235,7 +251,7 @@
         padding: 12px;
         background: #ffffff;
         display: grid;
-        gap: 4px;
+        gap: 6px;
       }
 
       .summary-card span {
@@ -350,25 +366,6 @@
         color: var(--muted);
       }
 
-      .tx-status {
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-weight: 600;
-      }
-
-      .tx-status.confirmed {
-        background: #e9f7ee;
-        color: var(--success);
-      }
-
-      .tx-status.pending {
-        background: #fdf2e3;
-        color: var(--warning);
-      }
-
       .receive-grid {
         display: grid;
         grid-template-columns: minmax(180px, 220px) 1fr;
@@ -409,6 +406,25 @@
         color: var(--muted);
         font-weight: 600;
         background: #f4f4f4;
+      }
+
+      .tx-status {
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+      }
+
+      .tx-status.confirmed {
+        background: #e9f7ee;
+        color: var(--success);
+      }
+
+      .tx-status.pending {
+        background: #fdf2e3;
+        color: var(--warning);
       }
 
       .network-grid {
@@ -477,23 +493,24 @@
         <header class="menu-bar">
           <ul class="menu-list" aria-label="Menú principal">
             <li>Archivo</li>
-            <li>Ajustes</li>
-            <li>Ventana</li>
+            <li>Editar</li>
+            <li>Vista</li>
+            <li>Herramientas</li>
             <li>Ayuda</li>
           </ul>
           <div class="window-title">
-            <h1>Bitcoin Core 25.0</h1>
-            <span>Maqueta UI · Vista clásica de escritorio</span>
+            <h1>Satoshi Visión Wallet · Nexos</h1>
+            <span>Panel clásico de escritorio · Núcleo Bitcoin privado</span>
           </div>
         </header>
 
         <div class="toolbar">
           <div class="toolbar-tabs" role="tablist" aria-label="Tabs principales">
-            <button class="toolbar-button active" type="button">Overview</button>
-            <button class="toolbar-button" type="button">Send</button>
-            <button class="toolbar-button" type="button">Receive</button>
-            <button class="toolbar-button" type="button">Transactions</button>
-            <button class="toolbar-button" type="button">Peers/Network</button>
+            <button class="toolbar-button active" type="button">Resumen</button>
+            <button class="toolbar-button" type="button">Enviar</button>
+            <button class="toolbar-button" type="button">Recibir</button>
+            <button class="toolbar-button" type="button">Transacciones</button>
+            <button class="toolbar-button" type="button">Red</button>
           </div>
           <div class="toolbar-status" aria-label="Estado del nodo">
             <span class="status-chip success" id="network-status">Mainnet · Sincronizado</span>
@@ -505,19 +522,19 @@
         <div class="workspace">
           <aside class="sidebar">
             <div>
-              <div class="sidebar-title">Navegación</div>
+              <div class="sidebar-title">Tabs</div>
               <ul class="nav-list">
-                <li class="nav-item active">Overview</li>
-                <li class="nav-item">Send</li>
-                <li class="nav-item">Receive</li>
-                <li class="nav-item">Transactions</li>
-                <li class="nav-item">Peers/Network</li>
+                <li class="nav-item active">Resumen</li>
+                <li class="nav-item">Enviar</li>
+                <li class="nav-item">Recibir</li>
+                <li class="nav-item">Transacciones</li>
+                <li class="nav-item">Red</li>
               </ul>
             </div>
             <div>
-              <div class="sidebar-title">Conexión</div>
+              <div class="sidebar-title">Estado rápido</div>
               <div class="sidebar-metrics">
-                <div><span>Estado</span> <strong>Conectado</strong></div>
+                <div><span>Conexión</span> <strong>Segura</strong></div>
                 <div><span>Bloques</span> <strong>99.98%</strong></div>
                 <div><span>Peers</span> <strong id="peers-inbound">Entrantes: 6</strong></div>
                 <div><span>Peers</span> <strong id="peers-outbound">Salientes: 8</strong></div>
@@ -527,214 +544,193 @@
 
           <section class="main-area">
             <div class="panel">
-              <h2 class="view-title">Overview</h2>
-              <div class="overview-grid">
-                <div class="summary-card">
-                  <span>Saldo disponible</span>
-                  <strong id="balance-available">1.2485 BTC</strong>
-                  <div class="helper">≈ 82,450 USD · tasa de referencia</div>
-                  <div class="balance-card">
-                    <div>
-                      <div class="helper">Dirección por defecto</div>
-                      <code id="active-address">bc1qexample...</code>
+              <div class="panel-header">
+                <div>
+                  <h2>Panel principal</h2>
+                  <div class="panel-subtitle">Resumen clásico con secciones y tabla de actividad.</div>
+                </div>
+                <div class="status-message">Última actualización: hace 2 min.</div>
+              </div>
+
+              <div class="panel-section" aria-label="Resumen de saldo">
+                <div class="section-title">Resumen de saldo</div>
+                <div class="overview-grid">
+                  <div class="summary-card">
+                    <span>Saldo disponible</span>
+                    <strong id="balance-available">1.2485 BTC</strong>
+                    <div class="helper">≈ 82,450 USD · tasa de referencia</div>
+                    <div class="balance-card">
+                      <div>
+                        <div class="helper">Dirección por defecto</div>
+                        <code id="active-address">bc1qexample...</code>
+                      </div>
+                      <button class="btn btn-secondary" type="button" id="copy-active-address">
+                        Copiar dirección
+                      </button>
+                      <div class="helper" id="active-address-status">Lista para compartir.</div>
                     </div>
-                    <button class="btn btn-secondary" type="button" id="copy-active-address">
-                      Copiar dirección
-                    </button>
-                    <div class="helper" id="active-address-status">Lista para compartir.</div>
+                  </div>
+                  <div class="summary-card">
+                    <span>En confirmación</span>
+                    <strong id="balance-pending">0.0421 BTC</strong>
+                    <div class="helper">3 transacciones pendientes</div>
+                  </div>
+                  <div class="summary-card">
+                    <span>Último movimiento</span>
+                    <strong id="last-movement">-0.0150 BTC</strong>
+                    <div class="helper">hace 12 min · 3/6 confirmaciones</div>
                   </div>
                 </div>
-                <div class="summary-card">
-                  <span>En confirmación</span>
-                  <strong id="balance-pending">0.0421 BTC</strong>
-                  <div class="helper">3 transacciones pendientes</div>
-                </div>
-                <div class="summary-card">
-                  <span>Último movimiento</span>
-                  <strong id="last-movement">-0.0150 BTC</strong>
-                  <div class="helper">hace 12 min · 3/6 confirmaciones</div>
-                </div>
               </div>
-            </div>
 
-            <div class="panel">
-              <h2 class="view-title">Resumen de transacciones recientes</h2>
-              <ul class="history" id="history-list"></ul>
-            </div>
-
-            <div class="panel">
-              <h2 class="view-title">Send</h2>
-              <form class="form" id="send-form" novalidate>
-                <div class="field">
-                  <label for="send-address">Enviar a</label>
-                  <input id="send-address" name="send-address" type="text" placeholder="Dirección Bitcoin" required />
-                  <div class="helper">Compatibilidad Bech32, base58 o BIP21.</div>
-                  <div class="error" id="address-error"></div>
-                </div>
-                <div class="field">
-                  <label for="send-amount">Cantidad (BTC)</label>
-                  <input
-                    id="send-amount"
-                    name="send-amount"
-                    type="number"
-                    min="0"
-                    step="0.0001"
-                    placeholder="0.0050"
-                    required
-                  />
-                  <div class="helper">Disponible: <span id="available-hint">1.2485</span> BTC</div>
-                  <div class="error" id="amount-error"></div>
-                </div>
-                <div class="field">
-                  <label for="send-fee">Tarifa</label>
-                  <select id="send-fee" name="send-fee" required>
-                    <option value="5">Económica (5 sat/vB)</option>
-                    <option value="12" selected>Estándar (12 sat/vB)</option>
-                    <option value="25">Prioritaria (25 sat/vB)</option>
-                  </select>
-                  <div class="error" id="fee-error"></div>
-                </div>
-                <div class="field">
-                  <label for="send-note">Etiqueta</label>
-                  <textarea id="send-note" name="send-note" placeholder="Nota interna"></textarea>
-                </div>
-                <div class="status-message" id="form-status">
-                  Listo para firmar y transmitir.
-                </div>
-                <div>
-                  <button class="btn btn-primary" type="submit">Enviar</button>
-                  <button class="btn btn-secondary" type="button" id="estimate">Simular confirmación</button>
-                </div>
-              </form>
-            </div>
-
-            <div class="panel">
-              <h2 class="view-title">Receive</h2>
-              <div class="receive-grid">
-                <div>
-                  <div class="qr" id="qr-code" aria-label="QR de recepción"></div>
-                  <div class="helper">QR BIP-21 para recibir pagos.</div>
+              <div class="panel-section" aria-label="Acciones rápidas">
+                <div class="section-title">Acciones rápidas</div>
+                <form class="form" id="send-form" novalidate>
                   <div class="field">
-                    <label for="receive-amount">Cantidad solicitada (BTC)</label>
+                    <label for="send-address">Enviar a</label>
+                    <input id="send-address" name="send-address" type="text" placeholder="Dirección Bitcoin" required />
+                    <div class="helper">Compatibilidad Bech32, base58 o BIP21.</div>
+                    <div class="error" id="address-error"></div>
+                  </div>
+                  <div class="field">
+                    <label for="send-amount">Cantidad (BTC)</label>
                     <input
-                      id="receive-amount"
-                      name="receive-amount"
+                      id="send-amount"
+                      name="send-amount"
                       type="number"
                       min="0"
                       step="0.0001"
-                      placeholder="Opcional"
+                      placeholder="0.0050"
+                      required
                     />
+                    <div class="helper">Disponible: <span id="available-hint">1.2485</span> BTC</div>
+                    <div class="error" id="amount-error"></div>
                   </div>
-                </div>
-                <div>
-                  <strong>Direcciones disponibles</strong>
-                  <ul class="address-list" id="address-list"></ul>
-                  <div class="helper" id="receive-status">
-                    Comparte una dirección a la vez.
+                  <div class="field">
+                    <label for="send-fee">Tarifa</label>
+                    <select id="send-fee" name="send-fee" required>
+                      <option value="5">Económica (5 sat/vB)</option>
+                      <option value="12" selected>Estándar (12 sat/vB)</option>
+                      <option value="25">Prioritaria (25 sat/vB)</option>
+                    </select>
+                    <div class="error" id="fee-error"></div>
+                  </div>
+                  <div class="field">
+                    <label for="send-note">Etiqueta</label>
+                    <textarea id="send-note" name="send-note" placeholder="Nota interna"></textarea>
+                  </div>
+                  <div class="status-message" id="form-status">
+                    Listo para firmar y transmitir.
                   </div>
                   <div>
-                    <button class="btn btn-secondary" type="button" id="copy-address">
-                      Copiar dirección
-                    </button>
-                    <button class="btn btn-primary" type="button" id="new-address">
-                      Nueva dirección
-                    </button>
+                    <button class="btn btn-primary" type="submit">Enviar</button>
+                    <button class="btn btn-secondary" type="button" id="estimate">Simular confirmación</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="panel-section" aria-label="Recepción">
+                <div class="section-title">Recepción clásica</div>
+                <div class="receive-grid">
+                  <div>
+                    <div class="qr" id="qr-code" aria-label="QR de recepción"></div>
+                    <div class="helper">QR BIP-21 para recibir pagos.</div>
+                    <div class="field">
+                      <label for="receive-amount">Cantidad solicitada (BTC)</label>
+                      <input
+                        id="receive-amount"
+                        name="receive-amount"
+                        type="number"
+                        min="0"
+                        step="0.0001"
+                        placeholder="Opcional"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <strong>Direcciones disponibles</strong>
+                    <ul class="address-list" id="address-list"></ul>
+                    <div class="helper" id="receive-status">
+                      Comparte una dirección a la vez.
+                    </div>
+                    <div>
+                      <button class="btn btn-secondary" type="button" id="copy-address">
+                        Copiar dirección
+                      </button>
+                      <button class="btn btn-primary" type="button" id="new-address">
+                        Nueva dirección
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="panel">
-              <h2 class="view-title">Transactions</h2>
-              <table class="table" aria-label="Tabla de transacciones">
-                <thead>
-                  <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th>Dirección</th>
-                    <th>Cantidad</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>2024-04-18 09:12</td>
-                    <td>Enviada</td>
-                    <td>bc1q9...m8l</td>
-                    <td>-0.0150 BTC</td>
-                    <td><span class="tx-status pending">Pendiente</span></td>
-                  </tr>
-                  <tr>
-                    <td>2024-04-17 18:42</td>
-                    <td>Recibida</td>
-                    <td>bc1q2...v9s</td>
-                    <td>+0.0421 BTC</td>
-                    <td><span class="tx-status confirmed">Confirmada</span></td>
-                  </tr>
-                  <tr>
-                    <td>2024-04-16 13:05</td>
-                    <td>Recibida</td>
-                    <td>bc1q7...t2p</td>
-                    <td>+0.2650 BTC</td>
-                    <td><span class="tx-status confirmed">Confirmada</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="panel">
-              <h2 class="view-title">Peers/Network</h2>
-              <div class="network-grid" id="network-grid">
-                <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
-                <div class="network-row"><span>Sincronización</span><strong id="sync-percent">99.98%</strong></div>
-                <div class="network-row">
-                  <span>Progreso</span>
-                  <span class="progress-chip" id="sync-chip">Sincronizando</span>
-                </div>
-                <div class="progress-track" aria-label="Progreso de sincronización">
-                  <span class="progress-fill" id="sync-progress" style="width: 0%"></span>
-                </div>
-                <div class="network-row"><span>Latencia</span><strong id="latency">182 ms</strong></div>
-                <div class="network-row"><span>MemPool</span><strong id="mempool">123 MB</strong></div>
-                <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
+              <div class="panel-section" aria-label="Transacciones recientes">
+                <div class="section-title">Tabla de transacciones</div>
+                <table class="table" aria-label="Tabla de transacciones">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Tipo</th>
+                      <th>Dirección</th>
+                      <th>Cantidad</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>2024-04-18 09:12</td>
+                      <td>Enviada</td>
+                      <td>bc1q9...m8l</td>
+                      <td>-0.0150 BTC</td>
+                      <td><span class="tx-status pending">Pendiente</span></td>
+                    </tr>
+                    <tr>
+                      <td>2024-04-17 18:42</td>
+                      <td>Recibida</td>
+                      <td>bc1q2...v9s</td>
+                      <td>+0.0421 BTC</td>
+                      <td><span class="tx-status confirmed">Confirmada</span></td>
+                    </tr>
+                    <tr>
+                      <td>2024-04-16 13:05</td>
+                      <td>Recibida</td>
+                      <td>bc1q7...t2p</td>
+                      <td>+0.2650 BTC</td>
+                      <td><span class="tx-status confirmed">Confirmada</span></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <table class="table" aria-label="Tabla de peers">
-                <thead>
-                  <tr>
-                    <th>IP</th>
-                    <th>Subred</th>
-                    <th>Ping</th>
-                    <th>Bloques</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>93.184.216.34</td>
-                    <td>IPv4</td>
-                    <td>142 ms</td>
-                    <td>821,442</td>
-                  </tr>
-                  <tr>
-                    <td>2606:4700:4700::1111</td>
-                    <td>IPv6</td>
-                    <td>188 ms</td>
-                    <td>821,441</td>
-                  </tr>
-                  <tr>
-                    <td>192.0.2.25</td>
-                    <td>Tor</td>
-                    <td>310 ms</td>
-                    <td>821,441</td>
-                  </tr>
-                </tbody>
-              </table>
+
+              <div class="panel-section" aria-label="Actividad reciente">
+                <div class="section-title">Actividad reciente</div>
+                <ul class="history" id="history-list"></ul>
+              </div>
+
+              <div class="panel-section" aria-label="Estado de red">
+                <div class="section-title">Estado de red</div>
+                <div class="network-grid" id="network-grid">
+                  <div class="network-row"><span>Nodo</span><strong>svw-nexos-01</strong></div>
+                  <div class="network-row"><span>Sincronización</span><strong id="sync-percent">99.98%</strong></div>
+                  <div class="network-row">
+                    <span>Progreso</span>
+                    <span class="progress-chip" id="sync-chip">Sincronizando</span>
+                  </div>
+                  <div class="progress-track" aria-label="Progreso de sincronización">
+                    <span class="progress-fill" id="sync-progress" style="width: 0%"></span>
+                  </div>
+                  <div class="network-row"><span>Latencia</span><strong id="latency">182 ms</strong></div>
+                  <div class="network-row"><span>MemPool</span><strong id="mempool">123 MB</strong></div>
+                  <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
+                </div>
+              </div>
             </div>
           </section>
         </div>
 
         <footer>
-          Referencia visual basada en Bitcoin Core 25.0 · Elementos clave: pestañas laterales, resumen de saldo,
-          tabla de transacciones y estado de red.
+          Interfaz clásica inspirada en nodos Bitcoin de escritorio · Satoshi Visión Wallet · Nexos.
         </footer>
       </div>
     </main>
