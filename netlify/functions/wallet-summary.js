@@ -78,9 +78,16 @@ exports.handler = async () => {
     const pending = balances?.mine?.untrusted_pending ?? 0;
     const lastMovement = transactions?.length ? Number(transactions[0].amount || 0) : 0;
 
-    const addresses = (received || [])
+    let addresses = (received || [])
       .map((entry) => entry.address)
       .filter(Boolean);
+
+    if (!addresses.length) {
+      const freshAddress = await rpcCall("getnewaddress");
+      if (freshAddress) {
+        addresses = [freshAddress];
+      }
+    }
 
     const seedWords = process.env.WALLET_SEED_WORDS
       ? process.env.WALLET_SEED_WORDS.split(/\s+/).filter(Boolean)
