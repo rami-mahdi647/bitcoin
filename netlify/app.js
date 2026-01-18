@@ -46,6 +46,7 @@ const peersOutbound = document.getElementById("peers-outbound");
 const copyAddressButton = document.getElementById("copy-address");
 const newAddressButton = document.getElementById("new-address");
 const receiveStatus = document.getElementById("receive-status");
+const receiveAmountInput = document.getElementById("receive-amount");
 
 const seedBox = document.getElementById("seed-phrase");
 const toggleSeedButton = document.getElementById("toggle-seed");
@@ -209,23 +210,73 @@ const renderAddresses = () => {
   });
 };
 
+const getReceiveAmount = () => {
+  if (!receiveAmountInput) {
+    return null;
+  }
+  const amount = Number(receiveAmountInput.value);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return null;
+  }
+  return amount;
+};
+
+const buildBitcoinUri = (address, amount) => {
+  if (!address) {
+    return "";
+  }
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return `bitcoin:${address}`;
+  }
+  return `bitcoin:${address}?amount=${amount}`;
+};
+
 const renderQr = () => {
+  if (!qrCode) {
+    return;
+  }
   qrCode.innerHTML = "";
   const data = getWalletData();
-  const addressSeed = data.addresses[0] ? data.addresses[0].length : 12;
-  const totalCells = 144;
-  for (let i = 0; i < totalCells; i += 1) {
-    const cell = document.createElement("span");
-    const seed = (i * 37 + addressSeed) % 11;
-    if (seed % 2 === 0) {
-      cell.style.opacity = "0.9";
-    } else if (seed % 3 === 0) {
-      cell.style.opacity = "0.4";
-    } else {
-      cell.style.opacity = "0.15";
-    }
-    qrCode.appendChild(cell);
+  const address = data.addresses[0];
+
+  if (!address) {
+    qrCode.classList.add("qr-empty");
+    qrCode.textContent = "Sin dirección disponible.";
+    return;
   }
+
+  const amount = getReceiveAmount();
+  const payload = buildBitcoinUri(address, amount);
+  const canvas = document.createElement("canvas");
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Código QR de recepción");
+  qrCode.classList.remove("qr-empty");
+  qrCode.appendChild(canvas);
+
+  if (!window.QRCode || typeof window.QRCode.toCanvas !== "function") {
+    qrCode.classList.add("qr-empty");
+    qrCode.textContent = "No se pudo cargar el generador QR.";
+    return;
+  }
+
+  window.QRCode.toCanvas(
+    canvas,
+    payload,
+    {
+      width: 220,
+      margin: 1,
+      color: {
+        dark: "#7be7ff",
+        light: "#050914",
+      },
+    },
+    (error) => {
+      if (error) {
+        qrCode.classList.add("qr-empty");
+        qrCode.textContent = "No se pudo generar el QR.";
+      }
+    },
+  );
 };
 
 const resetErrors = () => {
@@ -376,6 +427,12 @@ copyAddressButton.addEventListener("click", async () => {
 if (copyActiveAddressButton && activeAddressStatus) {
   copyActiveAddressButton.addEventListener("click", async () => {
     await copyActiveAddress(activeAddressStatus);
+  });
+}
+
+if (receiveAmountInput) {
+  receiveAmountInput.addEventListener("input", () => {
+    renderQr();
   });
 }
 
