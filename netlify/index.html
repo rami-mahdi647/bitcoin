@@ -45,72 +45,87 @@
         margin: 0 auto;
       }
 
-      .app-shell {
-        display: grid;
-        gap: 24px;
-      }
-
-      .app-header {
-        padding: 24px 28px;
-        background: var(--panel);
-        border: 1px solid var(--panel-border);
-        border-radius: 20px;
-        backdrop-filter: blur(16px);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
-        position: relative;
-        overflow: hidden;
+      .app-window {
         display: grid;
         gap: 18px;
+        background: rgba(7, 12, 24, 0.85);
+        border-radius: 24px;
+        border: 1px solid rgba(123, 231, 255, 0.2);
+        padding: 20px;
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(20px);
       }
 
-      .app-header::after {
-        content: "";
-        position: absolute;
-        inset: -40% 35% auto;
-        height: 240px;
-        background: radial-gradient(circle, rgba(123, 231, 255, 0.35), transparent 70%);
-        pointer-events: none;
-      }
-
-      .app-header-top {
+      .menu-bar {
         display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
         align-items: center;
         justify-content: space-between;
+        gap: 24px;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: rgba(12, 20, 38, 0.9);
+        border: 1px solid rgba(123, 231, 255, 0.2);
       }
 
-      .app-brand {
-        display: grid;
-        gap: 6px;
-      }
-
-      .tagline {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
+      .menu-list {
+        list-style: none;
+        display: flex;
+        gap: 18px;
         font-size: 0.85rem;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.2em;
-        color: var(--accent);
-      }
-
-      .app-title {
-        font-size: clamp(1.8rem, 3vw, 2.6rem);
-        letter-spacing: 0.04em;
-      }
-
-      .app-subtitle {
         color: var(--muted);
-        max-width: 640px;
-        line-height: 1.6;
       }
 
-      .app-meta {
+      .menu-item {
+        cursor: default;
+      }
+
+      .window-title {
+        display: grid;
+        gap: 4px;
+      }
+
+      .window-title h1 {
+        font-size: 1.35rem;
+      }
+
+      .window-title span {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .toolbar {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
         align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: var(--panel);
+        border: 1px solid rgba(123, 231, 255, 0.25);
+      }
+
+      .toolbar-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .toolbar-button {
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(123, 231, 255, 0.35);
+        background: rgba(123, 231, 255, 0.08);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .toolbar-button.active {
+        background: linear-gradient(120deg, rgba(123, 231, 255, 0.6), rgba(185, 147, 255, 0.6));
+        color: #04121c;
       }
 
       .pill {
@@ -132,14 +147,14 @@
         color: var(--warning);
       }
 
-      .app-layout {
+      .workspace {
         display: grid;
-        gap: 24px;
-        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        gap: 20px;
+        grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
       }
 
       .sidebar {
-        padding: 20px;
+        padding: 18px;
         background: rgba(9, 15, 30, 0.92);
         border: 1px solid rgba(123, 231, 255, 0.18);
         border-radius: 18px;
@@ -190,6 +205,37 @@
       .sidebar-metrics strong {
         color: var(--text);
         font-weight: 600;
+      }
+
+      .main-area {
+        display: grid;
+        gap: 20px;
+      }
+
+      .tab-strip {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: rgba(10, 16, 34, 0.7);
+        border: 1px solid rgba(123, 231, 255, 0.18);
+      }
+
+      .tab-button {
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        background: transparent;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      .tab-button.active {
+        color: var(--text);
+        background: rgba(123, 231, 255, 0.12);
+        border-color: rgba(123, 231, 255, 0.25);
       }
 
       .content-grid {
@@ -645,7 +691,7 @@
         text-align: center;
         color: var(--muted);
         font-size: 0.85rem;
-        padding-top: 10px;
+        padding-top: 8px;
       }
 
       .peer-details {
@@ -657,7 +703,7 @@
       }
 
       @media (max-width: 960px) {
-        .app-layout {
+        .workspace {
           grid-template-columns: 1fr;
         }
       }
@@ -665,29 +711,38 @@
   </head>
   <body>
     <main>
-      <div class="app-shell">
-        <header class="app-header">
-          <div class="app-header-top">
-            <div class="app-brand">
-              <div class="tagline">wallet nexus · panel seguro</div>
-              <h1 class="app-title">Bitcoin Core · Centro de wallet</h1>
-            </div>
-            <div class="app-meta">
-              <span class="pill success" id="network-status">Red principal · Sincronizada</span>
-              <span class="pill" id="block-height">Altura: 821,442</span>
-              <span class="pill warning" id="sync-state">Peers: 14 activos</span>
-            </div>
+      <div class="app-window">
+        <header class="menu-bar">
+          <ul class="menu-list" aria-label="Menú principal">
+            <li class="menu-item">Archivo</li>
+            <li class="menu-item">Ajustes</li>
+            <li class="menu-item">Ventana</li>
+            <li class="menu-item">Ayuda</li>
+          </ul>
+          <div class="window-title">
+            <h1>Bitcoin Core · Centro de wallet</h1>
+            <span>Vista general inspirada en la interfaz clásica de Bitcoin Core.</span>
           </div>
-          <p class="app-subtitle">
-            Vista general inspirada en Bitcoin Core para supervisar balances, envíos, recepción y
-            estado de red en un solo panel futurista con métricas en tiempo real.
-          </p>
         </header>
 
-        <div class="app-layout">
+        <div class="toolbar">
+          <div class="toolbar-group" role="tablist" aria-label="Acciones principales">
+            <button class="toolbar-button active" type="button">Resumen</button>
+            <button class="toolbar-button" type="button">Enviar</button>
+            <button class="toolbar-button" type="button">Recibir</button>
+            <button class="toolbar-button" type="button">Transacciones</button>
+          </div>
+          <div class="toolbar-group" aria-label="Estado del nodo">
+            <span class="pill success" id="network-status">Red principal · Sincronizada</span>
+            <span class="pill" id="block-height">Altura: 821,442</span>
+            <span class="pill warning" id="sync-state">Peers: 14 activos</span>
+          </div>
+        </div>
+
+        <div class="workspace">
           <aside class="sidebar">
             <div class="sidebar-section">
-              <div class="sidebar-title">Navegación</div>
+              <div class="sidebar-title">Secciones</div>
               <ul class="nav-list">
                 <li class="nav-item active">Resumen</li>
                 <li class="nav-item">Enviar</li>
@@ -710,340 +765,361 @@
             </div>
           </aside>
 
-          <section class="content-grid">
-            <section class="panel">
-              <h2>Resumen de saldo</h2>
-              <div class="balance-grid">
-                <div class="summary-card">
-                  <span>Disponible</span>
-                  <strong id="balance-available">1.2485 BTC</strong>
-                  <div class="helper">≈ 82,450 USD</div>
-                  <div class="balance-card">
-                    <div>
-                      <div class="helper">Dirección activa</div>
-                      <code id="active-address">bc1qexample...</code>
+          <section class="main-area">
+            <div class="tab-strip" role="tablist" aria-label="Tabs de la wallet">
+              <button class="tab-button active" type="button">Resumen</button>
+              <button class="tab-button" type="button">Enviar</button>
+              <button class="tab-button" type="button">Recibir</button>
+              <button class="tab-button" type="button">Historial</button>
+              <button class="tab-button" type="button">Red</button>
+              <button class="tab-button" type="button">Seguridad</button>
+            </div>
+
+            <div class="content-grid">
+              <section class="panel">
+                <h2>Resumen de saldo</h2>
+                <div class="balance-grid">
+                  <div class="summary-card">
+                    <span>Disponible</span>
+                    <strong id="balance-available">1.2485 BTC</strong>
+                    <div class="helper">≈ 82,450 USD</div>
+                    <div class="balance-card">
+                      <div>
+                        <div class="helper">Dirección activa</div>
+                        <code id="active-address">bc1qexample...</code>
+                      </div>
+                      <button class="btn btn-secondary" type="button" id="copy-active-address">
+                        Copiar dirección
+                      </button>
                     </div>
-                    <button class="btn btn-secondary" type="button" id="copy-active-address">
-                      Copiar dirección
-                    </button>
+                    <div class="helper" id="active-address-status">Lista para compartir.</div>
                   </div>
-                  <div class="helper" id="active-address-status">Lista para compartir.</div>
-                </div>
-                <div class="summary-card">
-                  <span>En confirmación</span>
-                  <strong id="balance-pending">0.0421 BTC</strong>
-                  <div class="helper">3 transacciones pendientes</div>
-                </div>
-                <div class="summary-card">
-                  <span>Último movimiento</span>
-                  <strong id="last-movement">-0.015 BTC</strong>
-                  <div class="helper">hace 12 min</div>
-                </div>
-              </div>
-            </section>
-
-            <section class="panel">
-              <h2>Enviar fondos</h2>
-              <form class="form" id="send-form" novalidate>
-                <div class="field">
-                  <label for="send-address">Dirección destino</label>
-                  <input
-                    id="send-address"
-                    name="send-address"
-                    type="text"
-                    placeholder="bc1q..."
-                    autocomplete="off"
-                    required
-                  />
-                  <div class="helper">Asegúrate de pegar una dirección válida de Bitcoin.</div>
-                  <div class="error" id="address-error"></div>
-                </div>
-                <div class="field">
-                  <label for="send-amount">Monto (BTC)</label>
-                  <input
-                    id="send-amount"
-                    name="send-amount"
-                    type="number"
-                    min="0"
-                    step="0.0001"
-                    placeholder="0.005"
-                    required
-                  />
-                  <div class="helper">
-                    Disponible para envío: <span id="available-hint">1.2485</span> BTC.
+                  <div class="summary-card">
+                    <span>En confirmación</span>
+                    <strong id="balance-pending">0.0421 BTC</strong>
+                    <div class="helper">3 transacciones pendientes</div>
                   </div>
-                  <div class="error" id="amount-error"></div>
+                  <div class="summary-card">
+                    <span>Último movimiento</span>
+                    <strong id="last-movement">-0.015 BTC</strong>
+                    <div class="helper">hace 12 min</div>
+                  </div>
                 </div>
-                <div class="field">
-                  <label for="send-fee">Tarifa sugerida (sat/vB)</label>
-                  <select id="send-fee" name="send-fee" required>
-                    <option value="5">5 sat/vB · económico</option>
-                    <option value="12" selected>12 sat/vB · estándar</option>
-                    <option value="25">25 sat/vB · prioritario</option>
-                  </select>
-                  <div class="helper">Se recalculará el tiempo estimado según la red.</div>
-                  <div class="error" id="fee-error"></div>
-                </div>
-                <div class="field">
-                  <label for="send-note">Nota interna</label>
-                  <textarea
-                    id="send-note"
-                    name="send-note"
-                    placeholder="Pago a proveedor, ahorro, etc."
-                  ></textarea>
-                </div>
-                <div class="cta">
-                  <button class="btn btn-primary" type="submit">Enviar ahora</button>
-                  <button class="btn btn-secondary" type="button" id="estimate">Calcular tiempo</button>
-                </div>
-                <div class="helper" id="form-status">Listo para firmar y transmitir.</div>
-              </form>
-            </section>
+              </section>
 
-            <section class="panel">
-              <h2>Recibir fondos</h2>
-              <div class="receive-grid">
-                <div>
-                  <div class="qr" id="qr-code" aria-label="Código QR para recibir"></div>
-                  <div class="helper">Escanea con cualquier wallet para recibir BTC.</div>
+              <section class="panel">
+                <h2>Enviar fondos</h2>
+                <form class="form" id="send-form" novalidate>
                   <div class="field">
-                    <label for="receive-amount">Monto solicitado (BTC)</label>
+                    <label for="send-address">Dirección destino</label>
                     <input
-                      id="receive-amount"
-                      name="receive-amount"
+                      id="send-address"
+                      name="send-address"
+                      type="text"
+                      placeholder="bc1q..."
+                      autocomplete="off"
+                      required
+                    />
+                    <div class="helper">Asegúrate de pegar una dirección válida de Bitcoin.</div>
+                    <div class="error" id="address-error"></div>
+                  </div>
+                  <div class="field">
+                    <label for="send-amount">Monto (BTC)</label>
+                    <input
+                      id="send-amount"
+                      name="send-amount"
                       type="number"
                       min="0"
                       step="0.0001"
-                      placeholder="Opcional"
+                      placeholder="0.005"
+                      required
                     />
-                    <div class="helper">Se añadirá al QR como URI BIP-21 si indicas un monto.</div>
+                    <div class="helper">
+                      Disponible para envío: <span id="available-hint">1.2485</span> BTC.
+                    </div>
+                    <div class="error" id="amount-error"></div>
                   </div>
-                </div>
-                <div class="form">
-                  <div>
-                    <strong>Direcciones activas</strong>
-                    <ul class="address-list" id="address-list"></ul>
+                  <div class="field">
+                    <label for="send-fee">Tarifa sugerida (sat/vB)</label>
+                    <select id="send-fee" name="send-fee" required>
+                      <option value="5">5 sat/vB · económico</option>
+                      <option value="12" selected>12 sat/vB · estándar</option>
+                      <option value="25">25 sat/vB · prioritario</option>
+                    </select>
+                    <div class="helper">Se recalculará el tiempo estimado según la red.</div>
+                    <div class="error" id="fee-error"></div>
+                  </div>
+                  <div class="field">
+                    <label for="send-note">Nota interna</label>
+                    <textarea
+                      id="send-note"
+                      name="send-note"
+                      placeholder="Pago a proveedor, ahorro, etc."
+                    ></textarea>
                   </div>
                   <div class="cta">
-                    <button class="btn btn-secondary" type="button" id="copy-address">Copiar dirección</button>
-                    <button class="btn btn-primary" type="button" id="new-address">Generar nueva</button>
+                    <button class="btn btn-primary" type="submit">Enviar ahora</button>
+                    <button class="btn btn-secondary" type="button" id="estimate">
+                      Calcular tiempo
+                    </button>
                   </div>
-                  <div class="helper" id="receive-status">Comparte solo una dirección a la vez.</div>
-                </div>
-              </div>
-            </section>
+                  <div class="helper" id="form-status">Listo para firmar y transmitir.</div>
+                </form>
+              </section>
 
-            <section class="panel">
-              <h2>Historial de transacciones</h2>
-              <ul class="history" id="history-list"></ul>
-            </section>
-
-            <section class="panel network-card">
-              <h2>Estado de red</h2>
-              <div class="network-grid" id="network-grid">
-                <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
-                <div class="network-row">
-                  <span>Sincronización</span><strong id="sync-percent">99.98%</strong>
-                </div>
-                <div class="network-progress" aria-label="Progreso de verificación">
-                  <div class="progress-track">
-                    <span class="progress-fill warning" id="sync-progress" style="width: 0%"></span>
+              <section class="panel">
+                <h2>Recibir fondos</h2>
+                <div class="receive-grid">
+                  <div>
+                    <div class="qr" id="qr-code" aria-label="Código QR para recibir"></div>
+                    <div class="helper">Escanea con cualquier wallet para recibir BTC.</div>
+                    <div class="field">
+                      <label for="receive-amount">Monto solicitado (BTC)</label>
+                      <input
+                        id="receive-amount"
+                        name="receive-amount"
+                        type="number"
+                        min="0"
+                        step="0.0001"
+                        placeholder="Opcional"
+                      />
+                      <div class="helper">Se añadirá al QR como URI BIP-21 si indicas un monto.</div>
+                    </div>
                   </div>
-                  <span class="progress-chip warning" id="sync-chip">Sincronizando</span>
+                  <div class="form">
+                    <div>
+                      <strong>Direcciones activas</strong>
+                      <ul class="address-list" id="address-list"></ul>
+                    </div>
+                    <div class="cta">
+                      <button class="btn btn-secondary" type="button" id="copy-address">
+                        Copiar dirección
+                      </button>
+                      <button class="btn btn-primary" type="button" id="new-address">
+                        Generar nueva
+                      </button>
+                    </div>
+                    <div class="helper" id="receive-status">Comparte solo una dirección a la vez.</div>
+                  </div>
                 </div>
-                <div class="network-row">
-                  <span>Latencia media</span>
-                  <strong>
-                    <span
-                      id="latency"
-                      class="metric-tooltip"
-                      title="No disponible"
-                      data-tooltip="No disponible"
-                      tabindex="0"
-                    >
-                      182 ms
-                    </span>
-                  </strong>
-                </div>
-                <div class="network-row">
-                  <span>MemPool</span>
-                  <strong>
-                    <span
-                      id="mempool"
-                      class="metric-tooltip"
-                      title="No disponible"
-                      data-tooltip="No disponible"
-                      tabindex="0"
-                    >
-                      123 MB
-                    </span>
-                  </strong>
-                </div>
-                <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
-              </div>
-            </section>
+              </section>
 
-            <section class="panel" id="seed-section">
-              <h2>Gestión de claves y seed</h2>
-              <div class="form">
-                <div>
-                  <div class="helper">Seed cifrada (12 palabras)</div>
-                  <div class="seed-box" id="seed-phrase">•••• •••• •••• •••• •••• ••••</div>
-                </div>
-                <div class="cta">
-                  <button class="btn btn-secondary" type="button" id="toggle-seed">Mostrar seed</button>
-                  <button class="btn btn-primary" type="button" id="backup-seed">Respaldar seed</button>
-                </div>
-                <div class="helper" id="seed-status">
-                  Guarda tu seed fuera de línea y nunca la compartas.
-                </div>
-              </div>
-            </section>
+              <section class="panel">
+                <h2>Historial de transacciones</h2>
+                <ul class="history" id="history-list"></ul>
+              </section>
 
-            <section class="panel">
-              <h2>Minería</h2>
-              <form class="form" id="mining-form" novalidate>
-                <div class="field">
-                  <label for="mining-pool">Pool o nodo de minería</label>
-                  <input
-                    id="mining-pool"
-                    name="mining-pool"
-                    type="url"
-                    placeholder="stratum+tcp://pool.example.com:3333"
-                    required
-                  />
-                  <div class="helper">Define el endpoint para enviar tus shares.</div>
+              <section class="panel network-card">
+                <h2>Estado de red</h2>
+                <div class="network-grid" id="network-grid">
+                  <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
+                  <div class="network-row">
+                    <span>Sincronización</span><strong id="sync-percent">99.98%</strong>
+                  </div>
+                  <div class="network-progress" aria-label="Progreso de verificación">
+                    <div class="progress-track">
+                      <span class="progress-fill warning" id="sync-progress" style="width: 0%"></span>
+                    </div>
+                    <span class="progress-chip warning" id="sync-chip">Sincronizando</span>
+                  </div>
+                  <div class="network-row">
+                    <span>Latencia media</span>
+                    <strong>
+                      <span
+                        id="latency"
+                        class="metric-tooltip"
+                        title="No disponible"
+                        data-tooltip="No disponible"
+                        tabindex="0"
+                      >
+                        182 ms
+                      </span>
+                    </strong>
+                  </div>
+                  <div class="network-row">
+                    <span>MemPool</span>
+                    <strong>
+                      <span
+                        id="mempool"
+                        class="metric-tooltip"
+                        title="No disponible"
+                        data-tooltip="No disponible"
+                        tabindex="0"
+                      >
+                        123 MB
+                      </span>
+                    </strong>
+                  </div>
+                  <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
                 </div>
-                <div class="field">
-                  <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
-                  <input
-                    id="mining-hashrate"
-                    name="mining-hashrate"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    placeholder="110.5"
-                    required
-                  />
-                  <div class="helper">Usado para estimar tiempos de producción.</div>
-                </div>
-                <div class="field">
-                  <label for="mining-payout">Dirección de cobro</label>
-                  <input
-                    id="mining-payout"
-                    name="mining-payout"
-                    type="text"
-                    placeholder="bc1q..."
-                    required
-                  />
-                  <div class="helper">Recibirás recompensas en esta dirección.</div>
-                </div>
-                <div class="cta">
-                  <button class="btn btn-primary" type="submit">Activar minería</button>
-                  <button class="btn btn-secondary" type="reset">Limpiar</button>
-                </div>
-                <div class="status-message" id="mining-status">
-                  Configura el pool y los parámetros de tu rig.
-                </div>
-              </form>
-            </section>
+              </section>
 
-            <section class="panel">
-              <h2>Contratos</h2>
-              <form class="form" id="contracts-form" novalidate>
-                <div class="field">
-                  <label for="contracts-template">Plantilla de contrato</label>
-                  <textarea
-                    id="contracts-template"
-                    name="contracts-template"
-                    placeholder="Incluye cláusulas, participantes y condiciones..."
-                    required
-                  ></textarea>
-                  <div class="helper">Base para construir un script y sus firmantes.</div>
+              <section class="panel" id="seed-section">
+                <h2>Gestión de claves y seed</h2>
+                <div class="form">
+                  <div>
+                    <div class="helper">Seed cifrada (12 palabras)</div>
+                    <div class="seed-box" id="seed-phrase">•••• •••• •••• •••• •••• ••••</div>
+                  </div>
+                  <div class="cta">
+                    <button class="btn btn-secondary" type="button" id="toggle-seed">
+                      Mostrar seed
+                    </button>
+                    <button class="btn btn-primary" type="button" id="backup-seed">
+                      Respaldar seed
+                    </button>
+                  </div>
+                  <div class="helper" id="seed-status">
+                    Guarda tu seed fuera de línea y nunca la compartas.
+                  </div>
                 </div>
-                <div class="field">
-                  <label for="contracts-amount">Monto bloqueado (BTC)</label>
-                  <input
-                    id="contracts-amount"
-                    name="contracts-amount"
-                    type="number"
-                    min="0"
-                    step="0.0001"
-                    placeholder="0.2500"
-                    required
-                  />
-                </div>
-                <div class="field">
-                  <label for="contracts-expiry">Vencimiento</label>
-                  <input id="contracts-expiry" name="contracts-expiry" type="date" required />
-                  <div class="helper">Define la fecha límite para liberar fondos.</div>
-                </div>
-                <div class="cta">
-                  <button class="btn btn-primary" type="submit">Crear borrador</button>
-                  <button class="btn btn-secondary" type="reset">Limpiar</button>
-                </div>
-                <div class="status-message" id="contracts-status">
-                  Prepara una plantilla clara antes de solicitar firmas.
-                </div>
-              </form>
-            </section>
+              </section>
 
-            <section class="panel">
-              <h2>CoinJoin</h2>
-              <form class="form" id="coinjoin-form" novalidate>
-                <div class="field">
-                  <label for="coinjoin-inputs">Inputs seleccionados</label>
-                  <textarea
-                    id="coinjoin-inputs"
-                    name="coinjoin-inputs"
-                    placeholder="UTXO1, UTXO2, UTXO3..."
-                    required
-                  ></textarea>
-                  <div class="helper">Lista de UTXOs que participarán en el mix.</div>
-                </div>
-                <div class="field">
-                  <label for="coinjoin-outputs">Outputs objetivo</label>
-                  <textarea
-                    id="coinjoin-outputs"
-                    name="coinjoin-outputs"
-                    placeholder="bc1q..., bc1q..."
-                    required
-                  ></textarea>
-                  <div class="helper">Define las direcciones de salida para el CoinJoin.</div>
-                </div>
-                <div class="field">
-                  <label for="coinjoin-rounds">Rondas de mezcla</label>
-                  <select id="coinjoin-rounds" name="coinjoin-rounds" required>
-                    <option value="2">2 rondas · rápido</option>
-                    <option value="4" selected>4 rondas · equilibrado</option>
-                    <option value="6">6 rondas · privado</option>
-                  </select>
-                  <div class="helper">A mayor cantidad de rondas, más privacidad.</div>
-                </div>
-                <div class="cta">
-                  <button class="btn btn-primary" type="submit">Iniciar CoinJoin</button>
-                  <button class="btn btn-secondary" type="reset">Limpiar</button>
-                </div>
-                <div class="status-message" id="coinjoin-status">
-                  Selecciona inputs y outputs antes de coordinar el mix.
-                </div>
-              </form>
-            </section>
+              <section class="panel">
+                <h2>Minería</h2>
+                <form class="form" id="mining-form" novalidate>
+                  <div class="field">
+                    <label for="mining-pool">Pool o nodo de minería</label>
+                    <input
+                      id="mining-pool"
+                      name="mining-pool"
+                      type="url"
+                      placeholder="stratum+tcp://pool.example.com:3333"
+                      required
+                    />
+                    <div class="helper">Define el endpoint para enviar tus shares.</div>
+                  </div>
+                  <div class="field">
+                    <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
+                    <input
+                      id="mining-hashrate"
+                      name="mining-hashrate"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      placeholder="110.5"
+                      required
+                    />
+                    <div class="helper">Usado para estimar tiempos de producción.</div>
+                  </div>
+                  <div class="field">
+                    <label for="mining-payout">Dirección de cobro</label>
+                    <input
+                      id="mining-payout"
+                      name="mining-payout"
+                      type="text"
+                      placeholder="bc1q..."
+                      required
+                    />
+                    <div class="helper">Recibirás recompensas en esta dirección.</div>
+                  </div>
+                  <div class="cta">
+                    <button class="btn btn-primary" type="submit">Activar minería</button>
+                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                  </div>
+                  <div class="status-message" id="mining-status">
+                    Configura el pool y los parámetros de tu rig.
+                  </div>
+                </form>
+              </section>
 
-            <section class="panel">
-              <h2>Aprende sobre Bitcoin</h2>
-              <div class="helper">
-                Explora el documento original para entender los fundamentos de la red y su diseño.
-              </div>
-              <a
-                class="link"
-                href="https://bitcoin.org/bitcoin.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Leer el Whitepaper
-              </a>
-            </section>
+              <section class="panel">
+                <h2>Contratos</h2>
+                <form class="form" id="contracts-form" novalidate>
+                  <div class="field">
+                    <label for="contracts-template">Plantilla de contrato</label>
+                    <textarea
+                      id="contracts-template"
+                      name="contracts-template"
+                      placeholder="Incluye cláusulas, participantes y condiciones..."
+                      required
+                    ></textarea>
+                    <div class="helper">Base para construir un script y sus firmantes.</div>
+                  </div>
+                  <div class="field">
+                    <label for="contracts-amount">Monto bloqueado (BTC)</label>
+                    <input
+                      id="contracts-amount"
+                      name="contracts-amount"
+                      type="number"
+                      min="0"
+                      step="0.0001"
+                      placeholder="0.2500"
+                      required
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="contracts-expiry">Vencimiento</label>
+                    <input id="contracts-expiry" name="contracts-expiry" type="date" required />
+                    <div class="helper">Define la fecha límite para liberar fondos.</div>
+                  </div>
+                  <div class="cta">
+                    <button class="btn btn-primary" type="submit">Crear borrador</button>
+                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                  </div>
+                  <div class="status-message" id="contracts-status">
+                    Prepara una plantilla clara antes de solicitar firmas.
+                  </div>
+                </form>
+              </section>
+
+              <section class="panel">
+                <h2>CoinJoin</h2>
+                <form class="form" id="coinjoin-form" novalidate>
+                  <div class="field">
+                    <label for="coinjoin-inputs">Inputs seleccionados</label>
+                    <textarea
+                      id="coinjoin-inputs"
+                      name="coinjoin-inputs"
+                      placeholder="UTXO1, UTXO2, UTXO3..."
+                      required
+                    ></textarea>
+                    <div class="helper">Lista de UTXOs que participarán en el mix.</div>
+                  </div>
+                  <div class="field">
+                    <label for="coinjoin-outputs">Outputs objetivo</label>
+                    <textarea
+                      id="coinjoin-outputs"
+                      name="coinjoin-outputs"
+                      placeholder="bc1q..., bc1q..."
+                      required
+                    ></textarea>
+                    <div class="helper">Define las direcciones de salida para el CoinJoin.</div>
+                  </div>
+                  <div class="field">
+                    <label for="coinjoin-rounds">Rondas de mezcla</label>
+                    <select id="coinjoin-rounds" name="coinjoin-rounds" required>
+                      <option value="2">2 rondas · rápido</option>
+                      <option value="4" selected>4 rondas · equilibrado</option>
+                      <option value="6">6 rondas · privado</option>
+                    </select>
+                    <div class="helper">A mayor cantidad de rondas, más privacidad.</div>
+                  </div>
+                  <div class="cta">
+                    <button class="btn btn-primary" type="submit">Iniciar CoinJoin</button>
+                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                  </div>
+                  <div class="status-message" id="coinjoin-status">
+                    Selecciona inputs y outputs antes de coordinar el mix.
+                  </div>
+                </form>
+              </section>
+
+              <section class="panel">
+                <h2>Aprende sobre Bitcoin</h2>
+                <div class="helper">
+                  Explora el documento original para entender los fundamentos de la red y su diseño.
+                </div>
+                <a
+                  class="link"
+                  href="https://bitcoin.org/bitcoin.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Leer el Whitepaper
+                </a>
+              </section>
+            </div>
           </section>
         </div>
 
