@@ -379,20 +379,39 @@ if (copyActiveAddressButton && activeAddressStatus) {
   });
 }
 
-newAddressButton.addEventListener("click", () => {
+newAddressButton.addEventListener("click", async () => {
   if (walletState.status !== "ready") {
     receiveStatus.textContent = "No es posible generar una dirección aún.";
     return;
   }
-  const data = getWalletData();
-  const rand = Math.random().toString(36).slice(2, 10);
-  const newAddress = `bc1q${rand}9l${rand}x2${rand}`;
-  data.addresses.unshift(newAddress);
-  data.addresses = data.addresses.slice(0, 5);
-  renderAddresses();
-  renderQr();
-  updateBalances();
-  receiveStatus.textContent = "Nueva dirección generada y lista para compartir.";
+
+  receiveStatus.textContent = "Generando dirección en el backend...";
+
+  try {
+    const response = await fetch("/api/wallet/new-address", {
+      method: "POST",
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload?.error || `Error del backend (${response.status})`);
+    }
+
+    walletState = {
+      status: "ready",
+      data: {
+        ...getWalletData(),
+        addresses: payload.addresses || (payload.address ? [payload.address] : []),
+      },
+      error: null,
+    };
+    renderAddresses();
+    renderQr();
+    updateBalances();
+    receiveStatus.textContent = "Nueva dirección generada y lista para compartir.";
+  } catch (error) {
+    receiveStatus.textContent =
+      error instanceof Error ? error.message : "No se pudo generar una nueva dirección.";
+  }
 });
 
 const renderSeed = () => {
