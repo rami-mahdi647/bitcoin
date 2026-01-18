@@ -500,7 +500,7 @@
           </ul>
           <div class="window-title">
             <h1>Satoshi Visión Wallet · Nexos</h1>
-            <span>Panel clásico de escritorio · Núcleo Bitcoin privado</span>
+            <span>Panel clásico de escritorio · Núcleo Nexos privado</span>
           </div>
         </header>
 
@@ -557,12 +557,12 @@
                 <div class="overview-grid">
                   <div class="summary-card">
                     <span>Saldo disponible</span>
-                    <strong id="balance-available">1.2485 BTC</strong>
+                    <strong id="balance-available">1.2485 NEX</strong>
                     <div class="helper">≈ 82,450 USD · tasa de referencia</div>
                     <div class="balance-card">
                       <div>
                         <div class="helper">Dirección por defecto</div>
-                        <code id="active-address">bc1qexample...</code>
+                        <code id="active-address">nx1qexample...</code>
                       </div>
                       <button class="btn btn-secondary" type="button" id="copy-active-address">
                         Copiar dirección
@@ -572,12 +572,12 @@
                   </div>
                   <div class="summary-card">
                     <span>En confirmación</span>
-                    <strong id="balance-pending">0.0421 BTC</strong>
+                    <strong id="balance-pending">0.0421 NEX</strong>
                     <div class="helper">3 transacciones pendientes</div>
                   </div>
                   <div class="summary-card">
                     <span>Último movimiento</span>
-                    <strong id="last-movement">-0.0150 BTC</strong>
+                    <strong id="last-movement">-0.0150 NEX</strong>
                     <div class="helper">hace 12 min · 3/6 confirmaciones</div>
                   </div>
                 </div>
@@ -588,12 +588,12 @@
                 <form class="form" id="send-form" novalidate>
                   <div class="field">
                     <label for="send-address">Enviar a</label>
-                    <input id="send-address" name="send-address" type="text" placeholder="Dirección Bitcoin" required />
+                    <input id="send-address" name="send-address" type="text" placeholder="Dirección Nexos" required />
                     <div class="helper">Compatibilidad Bech32, base58 o BIP21.</div>
                     <div class="error" id="address-error"></div>
                   </div>
                   <div class="field">
-                    <label for="send-amount">Cantidad (BTC)</label>
+                    <label for="send-amount">Cantidad (NEX)</label>
                     <input
                       id="send-amount"
                       name="send-amount"
@@ -603,15 +603,15 @@
                       placeholder="0.0050"
                       required
                     />
-                    <div class="helper">Disponible: <span id="available-hint">1.2485</span> BTC</div>
+                    <div class="helper">Disponible: <span id="available-hint">1.2485</span> NEX</div>
                     <div class="error" id="amount-error"></div>
                   </div>
                   <div class="field">
                     <label for="send-fee">Tarifa</label>
                     <select id="send-fee" name="send-fee" required>
-                      <option value="5">Económica (5 sat/vB)</option>
-                      <option value="12" selected>Estándar (12 sat/vB)</option>
-                      <option value="25">Prioritaria (25 sat/vB)</option>
+                      <option value="5">Económica (5 nex/vB)</option>
+                      <option value="12" selected>Estándar (12 nex/vB)</option>
+                      <option value="25">Prioritaria (25 nex/vB)</option>
                     </select>
                     <div class="error" id="fee-error"></div>
                   </div>
@@ -634,9 +634,9 @@
                 <div class="receive-grid">
                   <div>
                     <div class="qr" id="qr-code" aria-label="QR de recepción"></div>
-                    <div class="helper">QR BIP-21 para recibir pagos.</div>
+                    <div class="helper">QR Nexos para recibir pagos.</div>
                     <div class="field">
-                      <label for="receive-amount">Cantidad solicitada (BTC)</label>
+                      <label for="receive-amount">Cantidad solicitada (NEX)</label>
                       <input
                         id="receive-amount"
                         name="receive-amount"
@@ -681,22 +681,22 @@
                     <tr>
                       <td>2024-04-18 09:12</td>
                       <td>Enviada</td>
-                      <td>bc1q9...m8l</td>
-                      <td>-0.0150 BTC</td>
+                      <td>nx1q9...m8l</td>
+                      <td>-0.0150 NEX</td>
                       <td><span class="tx-status pending">Pendiente</span></td>
                     </tr>
                     <tr>
                       <td>2024-04-17 18:42</td>
                       <td>Recibida</td>
-                      <td>bc1q2...v9s</td>
-                      <td>+0.0421 BTC</td>
+                      <td>nx1q2...v9s</td>
+                      <td>+0.0421 NEX</td>
                       <td><span class="tx-status confirmed">Confirmada</span></td>
                     </tr>
                     <tr>
                       <td>2024-04-16 13:05</td>
                       <td>Recibida</td>
-                      <td>bc1q7...t2p</td>
-                      <td>+0.2650 BTC</td>
+                      <td>nx1q7...t2p</td>
+                      <td>+0.2650 NEX</td>
                       <td><span class="tx-status confirmed">Confirmada</span></td>
                     </tr>
                   </tbody>
@@ -730,7 +730,7 @@
         </div>
 
         <footer>
-          Interfaz clásica inspirada en nodos Bitcoin de escritorio · Satoshi Visión Wallet · Nexos.
+          Interfaz clásica inspirada en nodos Nexos de escritorio · Satoshi Visión Wallet · Nexos.
         </footer>
       </div>
     </main>
