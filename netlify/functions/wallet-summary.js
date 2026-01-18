@@ -1,9 +1,15 @@
+const RPC_CONFIG_ERROR =
+  "Configura BITCOIN_RPC_URL (o BITCOIN_RPC_HOST/BITCOIN_RPC_PORT) en Netlify.";
+
 const buildRpcUrl = () => {
   if (process.env.BITCOIN_RPC_URL) {
     return process.env.BITCOIN_RPC_URL;
   }
-  const host = process.env.BITCOIN_RPC_HOST || "http://127.0.0.1";
-  const port = process.env.BITCOIN_RPC_PORT || "8332";
+  const host = process.env.BITCOIN_RPC_HOST;
+  const port = process.env.BITCOIN_RPC_PORT;
+  if (!host || !port) {
+    throw new Error(RPC_CONFIG_ERROR);
+  }
   const wallet = process.env.BITCOIN_RPC_WALLET;
   const base = `${host.replace(/\/$/, "")}:${port}`;
   return wallet ? `${base}/wallet/${encodeURIComponent(wallet)}` : base;
