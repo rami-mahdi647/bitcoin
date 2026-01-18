@@ -9,28 +9,82 @@ let localEcdh;
 
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 
-const loadNodes = () => {
-  if (!process.env.ANTIFRAUD_MESH_NODES) {
+const parseBoolean = (value) =>
+  typeof value === "string" ? value.trim().toLowerCase() === "true" : Boolean(value);
+
+const parseMeshEndpoints = (rawValue) => {
+  if (!rawValue) {
     return [];
   }
-  try {
-    const parsed = JSON.parse(process.env.ANTIFRAUD_MESH_NODES);
-    if (Array.isArray(parsed)) {
-      return parsed
-        .filter((node) => node?.id && node?.url)
-        .map((node) => ({
-          id: node.id,
-          url: node.url.replace(/\/$/, ""),
-          ecdhPublicKey: node.ecdhPublicKey || null,
-          signingPublicKey: node.signingPublicKey || null,
-          weight: Number.isFinite(Number(node.weight)) ? Number(node.weight) : 1,
-        }));
+  const trimmed = rawValue.trim();
+  let parsed;
+  if (trimmed.startsWith("[")) {
+    try {
+      parsed = JSON.parse(trimmed);
+    } catch (error) {
+      return [];
     }
-  } catch (error) {
+  } else {
+    parsed = trimmed.split(",").map((entry) => entry.trim());
+  }
+
+  if (!Array.isArray(parsed)) {
     return [];
   }
-  return [];
+
+  return parsed
+    .map((entry) => {
+      if (typeof entry === "string") {
+        if (!entry) {
+          return null;
+        }
+        try {
+          const url = new URL(entry);
+          return {
+            id: url.hostname || entry,
+            url: entry.replace(/\/$/, ""),
+            ecdhPublicKey: null,
+            signingPublicKey: null,
+            weight: 1,
+          };
+        } catch (error) {
+          return null;
+        }
+      }
+      if (!entry || !entry.url) {
+        return null;
+      }
+      return {
+        id: entry.id || entry.url,
+        url: entry.url.replace(/\/$/, ""),
+        ecdhPublicKey: entry.ecdhPublicKey || null,
+        signingPublicKey: entry.signingPublicKey || null,
+        weight: Number.isFinite(Number(entry.weight)) ? Number(entry.weight) : 1,
+      };
+    })
+    .filter(Boolean);
 };
+
+const parseMeshQuorum = (rawValue) => {
+  if (!rawValue) {
+    return DEFAULT_QUORUM;
+  }
+  const value = String(rawValue).trim();
+  if (value.includes("/")) {
+    const [required] = value.split("/");
+    const requiredNumber = Number(required);
+    return Number.isFinite(requiredNumber) && requiredNumber > 0
+      ? requiredNumber
+      : DEFAULT_QUORUM;
+  }
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : DEFAULT_QUORUM;
+};
+
+const loadNodes = () =>
+  parseMeshEndpoints(
+    process.env.ANTIFRAUD_MESH_ENDPOINTS || process.env.ANTIFRAUD_MESH_NODES
+  );
 
 const getLocalEcdh = () => {
   if (localEcdh) {
@@ -49,7 +103,13 @@ const getLocalEcdh = () => {
 
 const getLocalEcdhPublicKey = () => getLocalEcdh().getPublicKey("base64");
 
-const getLocalSigningKey = () => process.env.ANTIFRAUD_MESH_SIGNING_KEY || null;
+const getLocalSigningKey = () =>
+  process.env.ANTIFRAUD_MESH_PRIVATE_KEY ||
+  process.env.ANTIFRAUD_MESH_SIGNING_KEY ||
+  null;
+
+const getLocalSigningPublicKey = () =>
+  process.env.ANTIFRAUD_MESH_PUBLIC_KEY || null;
 
 const signPayload = (payload) => {
   const signingKey = getLocalSigningKey();
@@ -129,6 +189,7 @@ const sendHandshake = async (node, timeoutMs, retries) => {
   const payload = {
     fromId: process.env.ANTIFRAUD_MESH_NODE_ID || "local",
     ecdhPublicKey: getLocalEcdhPublicKey(),
+    signingPublicKey: getLocalSigningPublicKey(),
     timestamp: new Date().toISOString(),
   };
   const unsigned = JSON.stringify(payload);
@@ -282,6 +343,10 @@ const aggregateSignals = (signals, threshold) => {
 };
 
 const collectMeshSignals = async ({ transaction, threshold }) => {
+  if (!parseBoolean(process.env.ANTIFRAUD_MESH_ENABLED)) {
+    return null;
+  }
+
   const nodes = loadNodes();
   if (!nodes.length) {
     return null;
@@ -291,7 +356,7 @@ const collectMeshSignals = async ({ transaction, threshold }) => {
   );
   const retries = Number(process.env.ANTIFRAUD_MESH_RETRIES || DEFAULT_RETRIES);
   const signalPath = process.env.ANTIFRAUD_MESH_SIGNAL_PATH || "/mesh-signal";
-  const quorum = Number(process.env.ANTIFRAUD_MESH_QUORUM || DEFAULT_QUORUM);
+  const quorum = parseMeshQuorum(process.env.ANTIFRAUD_MESH_QUORUM);
 
   const derived = deriveFeatures(transaction);
   const payload = {
@@ -368,4 +433,6 @@ module.exports = {
   collectMeshSignals,
   blendWithMesh,
   deriveFeatures,
+  parseMeshEndpoints,
+  parseMeshQuorum,
 };
