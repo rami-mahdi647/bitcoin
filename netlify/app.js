@@ -30,6 +30,7 @@ const formStatus = document.getElementById("form-status");
 const addressError = document.getElementById("address-error");
 const amountError = document.getElementById("amount-error");
 const feeError = document.getElementById("fee-error");
+const defaultFormStatus = formStatus ? formStatus.textContent : "";
 
 const networkStatus = document.getElementById("network-status");
 const blockHeight = document.getElementById("block-height");
@@ -58,6 +59,27 @@ let seedVisible = false;
 let seedWordsCache = [];
 
 const formatBtc = (value) => `${Number(value || 0).toFixed(4)} BTC`;
+
+const isRpcConfigError = (message) =>
+  typeof message === "string" && message.includes("BITCOIN_RPC");
+
+const showRpcConfigAlert = (message) => {
+  if (!formStatus || !message) {
+    return;
+  }
+  formStatus.textContent = message;
+  formStatus.dataset.rpcAlert = "true";
+};
+
+const clearRpcConfigAlert = () => {
+  if (!formStatus) {
+    return;
+  }
+  if (formStatus.dataset.rpcAlert === "true") {
+    formStatus.textContent = defaultFormStatus || "Listo para firmar y transmitir.";
+    delete formStatus.dataset.rpcAlert;
+  }
+};
 
 const getWalletData = () =>
   walletState.data || {
@@ -747,16 +769,26 @@ const cycleNetwork = async () => {
 
   try {
     const response = await fetch("/api/network/status");
-    if (!response.ok) {
-      throw new Error(`Respuesta inválida (${response.status})`);
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch (parseError) {
+      payload = null;
     }
-    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload?.error || `Respuesta inválida (${response.status})`);
+    }
     networkState = { status: "ready", data: payload, error: null };
+    clearRpcConfigAlert();
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Error desconocido";
+    if (isRpcConfigError(message)) {
+      showRpcConfigAlert(message);
+    }
     networkState = {
       status: "error",
       data: null,
-      error: error instanceof Error ? error.message : "Error desconocido",
+      error: message,
     };
   }
 
@@ -773,16 +805,26 @@ const loadWalletSummary = async () => {
 
   try {
     const response = await fetch("/api/wallet/summary");
-    if (!response.ok) {
-      throw new Error(`Respuesta inválida (${response.status})`);
+    let payload = null;
+    try {
+      payload = await response.json();
+    } catch (parseError) {
+      payload = null;
     }
-    const payload = await response.json();
+    if (!response.ok) {
+      throw new Error(payload?.error || `Respuesta inválida (${response.status})`);
+    }
     walletState = { status: "ready", data: payload, error: null };
+    clearRpcConfigAlert();
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Error desconocido";
+    if (isRpcConfigError(message)) {
+      showRpcConfigAlert(message);
+    }
     walletState = {
       status: "error",
       data: null,
-      error: error instanceof Error ? error.message : "Error desconocido",
+      error: message,
     };
   }
 
