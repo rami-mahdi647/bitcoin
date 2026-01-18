@@ -428,117 +428,123 @@ const copyActiveAddress = async (statusElement) => {
   }
 };
 
-sendForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  resetErrors();
+if (sendForm && addressInput && amountInput && feeSelect && formStatus && addressError && amountError && feeError) {
+  sendForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    resetErrors();
 
-  if (walletState.status !== "ready") {
-    formStatus.textContent = "Espera a que cargue la información del wallet.";
-    return;
-  }
-
-  const addressValue = addressInput.value.trim();
-  const amountValue = amountInput.value;
-  const feeValue = feeSelect.value;
-
-  let hasError = false;
-
-  if (!validateAddress(addressValue)) {
-    addressError.textContent = "Dirección inválida. Revisa el formato (bc1, 1 o 3).";
-    hasError = true;
-  }
-
-  if (!validateAmount(amountValue)) {
-    amountError.textContent = "Monto inválido o superior al saldo disponible.";
-    hasError = true;
-  }
-
-  if (!validateFee(feeValue)) {
-    feeError.textContent = "Selecciona una tarifa válida.";
-    hasError = true;
-  }
-
-  if (hasError) {
-    formStatus.textContent = "Corrige los campos antes de continuar.";
-    return;
-  }
-
-  const amountNumber = Number(amountValue);
-  const feeNumber = Number(feeValue);
-  formStatus.textContent = "Analizando riesgo antifraude...";
-
-  try {
-    const antifraud = await requestAntifraudValidation({
-      address: addressValue,
-      amount: amountNumber,
-      feeRate: feeNumber,
-    });
-
-    const threshold = Number(antifraud?.threshold ?? 0.7);
-    const riskScore = Number(antifraud?.score ?? 0);
-    if (antifraud?.decision !== "approve" || riskScore >= threshold) {
-      formStatus.textContent = antifraud?.reason
-        ? `Transacción bloqueada por riesgo alto. ${antifraud.reason}`
-        : "Transacción bloqueada por riesgo alto.";
+    if (walletState.status !== "ready") {
+      formStatus.textContent = "Espera a que cargue la información del wallet.";
       return;
     }
 
-    formStatus.textContent = `Aprobada por análisis antifraude (${formatRiskScore(riskScore)}). Enviando transacción...`;
+    const addressValue = addressInput.value.trim();
+    const amountValue = amountInput.value;
+    const feeValue = feeSelect.value;
 
-    const response = await fetch("/api/tx/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    let hasError = false;
+
+    if (!validateAddress(addressValue)) {
+      addressError.textContent = "Dirección inválida. Revisa el formato (bc1, 1 o 3).";
+      hasError = true;
+    }
+
+    if (!validateAmount(amountValue)) {
+      amountError.textContent = "Monto inválido o superior al saldo disponible.";
+      hasError = true;
+    }
+
+    if (!validateFee(feeValue)) {
+      feeError.textContent = "Selecciona una tarifa válida.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      formStatus.textContent = "Corrige los campos antes de continuar.";
+      return;
+    }
+
+    const amountNumber = Number(amountValue);
+    const feeNumber = Number(feeValue);
+    formStatus.textContent = "Analizando riesgo antifraude...";
+
+    try {
+      const antifraud = await requestAntifraudValidation({
         address: addressValue,
         amount: amountNumber,
         feeRate: feeNumber,
-      }),
-    });
+      });
 
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload?.error || `Error del backend (${response.status})`);
-    }
+      const threshold = Number(antifraud?.threshold ?? 0.7);
+      const riskScore = Number(antifraud?.score ?? 0);
+      if (antifraud?.decision !== "approve" || riskScore >= threshold) {
+        formStatus.textContent = antifraud?.reason
+          ? `Transacción bloqueada por riesgo alto. ${antifraud.reason}`
+          : "Transacción bloqueada por riesgo alto.";
+        return;
+      }
 
-    if (payload.wallet) {
-      walletState = {
-        status: "ready",
-        data: {
-          ...getWalletData(),
-          ...payload.wallet,
+      formStatus.textContent = `Aprobada por análisis antifraude (${formatRiskScore(riskScore)}). Enviando transacción...`;
+
+      const response = await fetch("/api/tx/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        error: null,
-      };
-      updateBalances();
-      renderHistory();
-      renderAddresses();
-      renderQr();
-    }
+        body: JSON.stringify({
+          address: addressValue,
+          amount: amountNumber,
+          feeRate: feeNumber,
+        }),
+      });
 
-    if (payload.mempool?.bytes) {
-      const mempoolValue = (payload.mempool.bytes / 1e6).toFixed(1);
-      mempool.textContent = `${mempoolValue} MB`;
-      setTooltip(mempool, `${mempoolValue} MB · tamaño del mempool en MB`);
-    }
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload?.error || `Error del backend (${response.status})`);
+      }
 
-    formStatus.textContent = `Transacción ${payload.txid || ""} enviada (${payload.status || "pendiente"}).`;
-    sendForm.reset();
-  } catch (error) {
-    formStatus.textContent =
-      error instanceof Error ? error.message : "No se pudo enviar la transacción.";
+      if (payload.wallet) {
+        walletState = {
+          status: "ready",
+          data: {
+            ...getWalletData(),
+            ...payload.wallet,
+          },
+          error: null,
+        };
+        updateBalances();
+        renderHistory();
+        renderAddresses();
+        renderQr();
+      }
+
+      if (payload.mempool?.bytes && mempool) {
+        const mempoolValue = (payload.mempool.bytes / 1e6).toFixed(1);
+        mempool.textContent = `${mempoolValue} MB`;
+        setTooltip(mempool, `${mempoolValue} MB · tamaño del mempool en MB`);
+      }
+
+      formStatus.textContent = `Transacción ${payload.txid || ""} enviada (${payload.status || "pendiente"}).`;
+      sendForm.reset();
+    } catch (error) {
+      formStatus.textContent =
+        error instanceof Error ? error.message : "No se pudo enviar la transacción.";
+    }
+  });
+
+  if (estimateButton) {
+    estimateButton.addEventListener("click", () => {
+      resetErrors();
+      simulateEstimate();
+    });
   }
-});
+}
 
-estimateButton.addEventListener("click", () => {
-  resetErrors();
-  simulateEstimate();
-});
-
-copyAddressButton.addEventListener("click", async () => {
-  await copyActiveAddress(receiveStatus);
-});
+if (copyAddressButton && receiveStatus) {
+  copyAddressButton.addEventListener("click", async () => {
+    await copyActiveAddress(receiveStatus);
+  });
+}
 
 if (copyActiveAddressButton && activeAddressStatus) {
   copyActiveAddressButton.addEventListener("click", async () => {
@@ -552,40 +558,42 @@ if (receiveAmountInput) {
   });
 }
 
-newAddressButton.addEventListener("click", async () => {
-  if (walletState.status !== "ready") {
-    receiveStatus.textContent = "No es posible generar una dirección aún.";
-    return;
-  }
-
-  receiveStatus.textContent = "Generando dirección en el backend...";
-
-  try {
-    const response = await fetch("/api/wallet/new-address", {
-      method: "POST",
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload?.error || `Error del backend (${response.status})`);
+if (newAddressButton && receiveStatus) {
+  newAddressButton.addEventListener("click", async () => {
+    if (walletState.status !== "ready") {
+      receiveStatus.textContent = "No es posible generar una dirección aún.";
+      return;
     }
 
-    walletState = {
-      status: "ready",
-      data: {
-        ...getWalletData(),
-        addresses: payload.addresses || (payload.address ? [payload.address] : []),
-      },
-      error: null,
-    };
-    renderAddresses();
-    renderQr();
-    updateBalances();
-    receiveStatus.textContent = "Nueva dirección generada y lista para compartir.";
-  } catch (error) {
-    receiveStatus.textContent =
-      error instanceof Error ? error.message : "No se pudo generar una nueva dirección.";
-  }
-});
+    receiveStatus.textContent = "Generando dirección en el backend...";
+
+    try {
+      const response = await fetch("/api/wallet/new-address", {
+        method: "POST",
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload?.error || `Error del backend (${response.status})`);
+      }
+
+      walletState = {
+        status: "ready",
+        data: {
+          ...getWalletData(),
+          addresses: payload.addresses || (payload.address ? [payload.address] : []),
+        },
+        error: null,
+      };
+      renderAddresses();
+      renderQr();
+      updateBalances();
+      receiveStatus.textContent = "Nueva dirección generada y lista para compartir.";
+    } catch (error) {
+      receiveStatus.textContent =
+        error instanceof Error ? error.message : "No se pudo generar una nueva dirección.";
+    }
+  });
+}
 
 const renderSeed = () => {
   if (!seedSection || !seedBox || !toggleSeedButton || !backupSeedButton || !seedStatus) {
@@ -652,81 +660,85 @@ const requestSeedCredentials = () => {
   return { confirmation: confirmation.trim(), password: password.trim() };
 };
 
-toggleSeedButton.addEventListener("click", () => {
-  if (seedVisible) {
-    seedVisible = false;
-    seedWordsCache = [];
-    renderSeed();
-    seedStatus.textContent = "Seed ocultada.";
-    return;
-  }
-
-  const credentials = requestSeedCredentials();
-  if (!credentials) {
-    return;
-  }
-
-  seedStatus.textContent = "Validando acceso...";
-  fetch("/api/seed/backup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...credentials, mode: "reveal" }),
-  })
-    .then(async (response) => {
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload?.error || "No se pudo revelar la seed.");
-      }
-      seedWordsCache = Array.isArray(payload.seedWords) ? payload.seedWords : [];
-      seedVisible = true;
+if (toggleSeedButton && seedStatus) {
+  toggleSeedButton.addEventListener("click", () => {
+    if (seedVisible) {
+      seedVisible = false;
+      seedWordsCache = [];
       renderSeed();
-      seedStatus.textContent = "Seed revelada temporalmente. Ocúltala al terminar.";
+      seedStatus.textContent = "Seed ocultada.";
+      return;
+    }
+
+    const credentials = requestSeedCredentials();
+    if (!credentials) {
+      return;
+    }
+
+    seedStatus.textContent = "Validando acceso...";
+    fetch("/api/seed/backup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...credentials, mode: "reveal" }),
     })
-    .catch((error) => {
-      seedStatus.textContent =
-        error instanceof Error ? error.message : "No se pudo revelar la seed.";
-    });
-});
-
-backupSeedButton.addEventListener("click", () => {
-  const credentials = requestSeedCredentials();
-  if (!credentials) {
-    return;
-  }
-
-  seedStatus.textContent = "Generando respaldo cifrado...";
-  fetch("/api/seed/backup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ...credentials, mode: "export" }),
-  })
-    .then(async (response) => {
-      const payload = await response.json();
-      if (!response.ok) {
-        throw new Error(payload?.error || "No se pudo generar el respaldo.");
-      }
-
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {
-        type: "application/json",
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload?.error || "No se pudo revelar la seed.");
+        }
+        seedWordsCache = Array.isArray(payload.seedWords) ? payload.seedWords : [];
+        seedVisible = true;
+        renderSeed();
+        seedStatus.textContent = "Seed revelada temporalmente. Ocúltala al terminar.";
+      })
+      .catch((error) => {
+        seedStatus.textContent =
+          error instanceof Error ? error.message : "No se pudo revelar la seed.";
       });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `seed-backup-${new Date().toISOString().slice(0, 10)}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
+  });
+}
 
-      seedStatus.textContent = "Respaldo generado. Guarda el archivo cifrado con cuidado.";
+if (backupSeedButton && seedStatus) {
+  backupSeedButton.addEventListener("click", () => {
+    const credentials = requestSeedCredentials();
+    if (!credentials) {
+      return;
+    }
+
+    seedStatus.textContent = "Generando respaldo cifrado...";
+    fetch("/api/seed/backup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...credentials, mode: "export" }),
     })
-    .catch((error) => {
-      seedStatus.textContent =
-        error instanceof Error ? error.message : "No se pudo generar el respaldo.";
-    });
-});
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload?.error || "No se pudo generar el respaldo.");
+        }
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `seed-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        seedStatus.textContent = "Respaldo generado. Guarda el archivo cifrado con cuidado.";
+      })
+      .catch((error) => {
+        seedStatus.textContent =
+          error instanceof Error ? error.message : "No se pudo generar el respaldo.";
+      });
+  });
+}
 
 if (miningForm) {
   miningForm.addEventListener("submit", async (event) => {

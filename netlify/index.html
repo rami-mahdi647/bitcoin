@@ -3,26 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Wallet Nexus · Bitcoin</title>
+    <title>Bitcoin Core 25.0 · UI clásica</title>
     <meta
       name="description"
-      content="Panel futurista para gestionar una wallet de Bitcoin con envío, recepción, historial y seguridad."
-    />
+      content="Maqueta de la interfaz clásica de Bitcoin Core 25.0 con resumen, envío, recepción, transacciones y red." />
     <style>
       :root {
-        color-scheme: dark;
-        --bg: #05070c;
-        --bg-soft: #0f1424;
-        --panel: rgba(12, 20, 38, 0.82);
-        --panel-border: rgba(123, 231, 255, 0.3);
-        --accent: #7be7ff;
-        --accent-2: #b993ff;
-        --accent-3: #42ffb3;
-        --text: #e6f2ff;
-        --muted: #90a0bc;
-        --danger: #ff6b91;
-        --warning: #ffd369;
-        font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+        color-scheme: light;
+        --bg: #e5e5e5;
+        --window: #f3f3f3;
+        --panel: #fafafa;
+        --panel-border: #c6c6c6;
+        --text: #1c1c1c;
+        --muted: #5f6368;
+        --accent: #d18c2b;
+        --accent-2: #2c6aa0;
+        --success: #2f9e44;
+        --warning: #c96b12;
+        --danger: #c92a2a;
+        font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
       }
 
       * {
@@ -32,39 +31,31 @@
       }
 
       body {
-        min-height: 100vh;
-        background: radial-gradient(circle at top, #1b254b 0%, #05070c 55%),
-          radial-gradient(circle at 20% 20%, rgba(123, 231, 255, 0.18), transparent 40%),
-          radial-gradient(circle at 80% 15%, rgba(185, 147, 255, 0.18), transparent 35%);
+        background: linear-gradient(180deg, #f0f0f0, #d9d9d9 40%, #cfcfcf);
         color: var(--text);
-        padding: 32px 24px 40px;
+        padding: 28px;
       }
 
       main {
-        width: min(1280px, 100%);
+        max-width: 1200px;
         margin: 0 auto;
       }
 
       .app-window {
-        display: grid;
-        gap: 18px;
-        background: rgba(7, 12, 24, 0.85);
-        border-radius: 24px;
-        border: 1px solid rgba(123, 231, 255, 0.2);
-        padding: 20px;
-        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(20px);
+        background: var(--window);
+        border: 1px solid #bdbdbd;
+        border-radius: 12px;
+        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
+        overflow: hidden;
       }
 
       .menu-bar {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 24px;
-        padding: 12px 16px;
-        border-radius: 16px;
-        background: rgba(12, 20, 38, 0.9);
-        border: 1px solid rgba(123, 231, 255, 0.2);
+        padding: 10px 16px;
+        background: linear-gradient(180deg, #fbfbfb, #e7e7e7);
+        border-bottom: 1px solid #c2c2c2;
       }
 
       .menu-list {
@@ -72,274 +63,231 @@
         display: flex;
         gap: 18px;
         font-size: 0.85rem;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--muted);
-      }
-
-      .menu-item {
-        cursor: default;
+        color: #333;
       }
 
       .window-title {
+        text-align: right;
         display: grid;
-        gap: 4px;
+        gap: 2px;
       }
 
       .window-title h1 {
-        font-size: 1.35rem;
+        font-size: 1.1rem;
+        font-weight: 600;
       }
 
       .window-title span {
+        font-size: 0.8rem;
         color: var(--muted);
-        font-size: 0.85rem;
       }
 
       .toolbar {
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
         justify-content: space-between;
-        padding: 14px 16px;
-        border-radius: 16px;
-        background: var(--panel);
-        border: 1px solid rgba(123, 231, 255, 0.25);
+        align-items: center;
+        padding: 12px 16px;
+        border-bottom: 1px solid #c6c6c6;
+        background: #f7f7f7;
+        gap: 12px;
       }
 
-      .toolbar-group {
+      .toolbar-tabs {
         display: flex;
+        gap: 8px;
         flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
       }
 
       .toolbar-button {
-        padding: 8px 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(123, 231, 255, 0.35);
-        background: rgba(123, 231, 255, 0.08);
+        border: 1px solid #b7b7b7;
+        background: #ffffff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
         font-weight: 600;
-        font-size: 0.9rem;
+        color: #333;
       }
 
       .toolbar-button.active {
-        background: linear-gradient(120deg, rgba(123, 231, 255, 0.6), rgba(185, 147, 255, 0.6));
-        color: #04121c;
+        background: #f2e4cc;
+        border-color: var(--accent);
+        color: #6a3b00;
       }
 
-      .pill {
-        padding: 8px 14px;
+      .toolbar-status {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-size: 0.8rem;
+        color: #444;
+      }
+
+      .status-chip {
+        padding: 4px 10px;
         border-radius: 999px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        border: 1px solid rgba(123, 231, 255, 0.35);
-        background: rgba(123, 231, 255, 0.1);
+        border: 1px solid #c2c2c2;
+        background: #ffffff;
       }
 
-      .pill.success {
-        border-color: rgba(66, 255, 179, 0.4);
-        color: var(--accent-3);
+      .status-chip.success {
+        border-color: #b1e0bd;
+        color: var(--success);
+        background: #eef8f1;
       }
 
-      .pill.warning {
-        border-color: rgba(255, 211, 105, 0.4);
+      .status-chip.warning {
+        border-color: #f3d3a7;
         color: var(--warning);
+        background: #fdf2e3;
       }
 
       .workspace {
         display: grid;
-        gap: 20px;
-        grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
+        grid-template-columns: 220px 1fr;
+        min-height: 600px;
       }
 
       .sidebar {
-        padding: 18px;
-        background: rgba(9, 15, 30, 0.92);
-        border: 1px solid rgba(123, 231, 255, 0.18);
-        border-radius: 18px;
+        background: #efefef;
+        border-right: 1px solid #c7c7c7;
+        padding: 16px 12px;
         display: grid;
-        gap: 18px;
-      }
-
-      .sidebar-section {
-        display: grid;
-        gap: 12px;
+        gap: 14px;
+        align-content: start;
       }
 
       .sidebar-title {
-        font-size: 0.85rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
+        font-size: 0.7rem;
         color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 4px;
       }
 
       .nav-list {
         list-style: none;
         display: grid;
-        gap: 8px;
+        gap: 6px;
       }
 
       .nav-item {
-        padding: 10px 12px;
-        border-radius: 12px;
-        background: rgba(10, 16, 34, 0.6);
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: #fafafa;
         border: 1px solid transparent;
-        font-weight: 600;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
       }
 
       .nav-item.active {
-        border-color: rgba(123, 231, 255, 0.4);
-        color: var(--accent);
-        box-shadow: inset 0 0 0 1px rgba(123, 231, 255, 0.15);
+        border-color: var(--accent-2);
+        background: #e8f0f7;
+        color: #0f3b66;
+        font-weight: 600;
       }
 
       .sidebar-metrics {
-        display: grid;
-        gap: 10px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: var(--muted);
+        display: grid;
+        gap: 6px;
       }
 
       .sidebar-metrics strong {
-        color: var(--text);
-        font-weight: 600;
+        color: #222;
       }
 
       .main-area {
+        padding: 16px 18px 22px;
         display: grid;
-        gap: 20px;
+        gap: 18px;
+        background: #f9f9f9;
       }
 
-      .tab-strip {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 10px 12px;
-        border-radius: 14px;
-        background: rgba(10, 16, 34, 0.7);
-        border: 1px solid rgba(123, 231, 255, 0.18);
-      }
-
-      .tab-button {
-        padding: 8px 12px;
-        border-radius: 10px;
-        border: 1px solid transparent;
-        background: transparent;
-        font-size: 0.9rem;
+      .view-title {
+        font-size: 1rem;
+        color: #222;
         font-weight: 600;
-        color: var(--muted);
-      }
-
-      .tab-button.active {
-        color: var(--text);
-        background: rgba(123, 231, 255, 0.12);
-        border-color: rgba(123, 231, 255, 0.25);
-      }
-
-      .content-grid {
-        display: grid;
-        gap: 24px;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       }
 
       .panel {
-        padding: 22px;
         background: var(--panel);
-        border-radius: 16px;
-        border: 1px solid transparent;
-        border-image: linear-gradient(135deg, var(--panel-border), transparent 70%) 1;
-        box-shadow: inset 0 0 0 1px rgba(123, 231, 255, 0.08);
+        border: 1px solid var(--panel-border);
+        border-radius: 10px;
+        padding: 16px;
         display: grid;
-        gap: 16px;
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .panel::after {
-        content: "";
-        position: absolute;
-        inset: auto -40% -60% auto;
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, rgba(123, 231, 255, 0.18), transparent 70%);
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-      }
-
-      .panel:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 24px 45px rgba(4, 12, 26, 0.55);
-      }
-
-      .panel:hover::after {
-        opacity: 1;
+        gap: 12px;
       }
 
       .panel h2 {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
       }
 
-      .balance-grid {
+      .overview-grid {
         display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 12px;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       }
 
       .summary-card {
-        padding: 14px;
-        border-radius: 12px;
-        background: rgba(10, 16, 34, 0.6);
+        border: 1px solid #d0d0d0;
+        border-radius: 8px;
+        padding: 12px;
+        background: #ffffff;
         display: grid;
         gap: 4px;
-        border: 1px solid rgba(123, 231, 255, 0.08);
-        transition: border 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      .summary-card:hover {
-        border-color: rgba(123, 231, 255, 0.35);
-        box-shadow: inset 0 0 0 1px rgba(123, 231, 255, 0.15);
       }
 
       .summary-card span {
+        font-size: 0.78rem;
         color: var(--muted);
-        font-size: 0.85rem;
       }
 
       .summary-card strong {
-        font-size: 1.15rem;
+        font-size: 1rem;
       }
 
       .balance-card {
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: 12px;
-        background: rgba(5, 9, 20, 0.72);
-        border: 1px solid rgba(123, 231, 255, 0.16);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 10px;
+        margin-top: 6px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        background: #f8f8f8;
+        display: grid;
+        gap: 6px;
       }
 
       .balance-card code {
-        display: block;
-        color: var(--accent);
-        font-size: 0.82rem;
+        font-size: 0.8rem;
+        color: var(--accent-2);
         word-break: break-all;
       }
 
-      .balance-card .btn {
+      .btn {
         padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #b8b8b8;
+        background: #ffffff;
         font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: #f2e4cc;
+        border-color: var(--accent);
+        color: #6a3b00;
+      }
+
+      .btn-secondary {
+        background: #e7eef6;
+        border-color: var(--accent-2);
+        color: #0f3b66;
       }
 
       .form {
         display: grid;
-        gap: 14px;
+        gap: 10px;
       }
 
       .field {
@@ -348,363 +296,176 @@
       }
 
       label {
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         color: var(--muted);
       }
 
       input,
       textarea,
       select {
-        background: rgba(5, 9, 20, 0.9);
-        border: 1px solid rgba(123, 231, 255, 0.2);
-        border-radius: 10px;
-        color: var(--text);
-        padding: 10px 12px;
-        font-size: 0.95rem;
-        outline: none;
-        transition: border 0.2s ease, box-shadow 0.2s ease;
-      }
-
-      input:focus,
-      textarea:focus,
-      select:focus {
-        border-color: rgba(123, 231, 255, 0.6);
-        box-shadow: 0 0 0 2px rgba(123, 231, 255, 0.15);
+        border: 1px solid #c6c6c6;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        background: #ffffff;
       }
 
       textarea {
-        min-height: 80px;
+        min-height: 60px;
         resize: vertical;
       }
 
       .helper {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--muted);
-        line-height: 1.4;
-      }
-
-      .status-message {
-        font-size: 0.8rem;
-        color: var(--muted);
-        min-height: 18px;
-        line-height: 1.4;
-      }
-
-      .status-message.is-success {
-        color: var(--accent-3);
-      }
-
-      .status-message.is-error {
-        color: var(--danger);
       }
 
       .error {
+        font-size: 0.75rem;
         color: var(--danger);
-        font-size: 0.82rem;
-        min-height: 18px;
+        min-height: 16px;
       }
 
-      .cta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .btn,
-      .link {
-        border: none;
-        padding: 12px 18px;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
-        text-decoration: none;
-        color: var(--text);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(120deg, var(--accent), var(--accent-2));
-        color: #04121c;
-        box-shadow: 0 8px 24px rgba(123, 231, 255, 0.25);
-      }
-
-      .btn-secondary,
-      .link {
-        background: rgba(123, 231, 255, 0.08);
-        border: 1px solid rgba(123, 231, 255, 0.3);
-      }
-
-      .btn:active,
-      .link:active {
-        transform: scale(0.98);
-      }
-
-      .btn:hover {
-        box-shadow: 0 0 18px rgba(123, 231, 255, 0.35);
-      }
-
-      .receive-grid {
-        display: grid;
-        gap: 16px;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      }
-
-      .qr {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        background: rgba(5, 9, 20, 0.85);
-        border-radius: 16px;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(123, 231, 255, 0.2);
-      }
-
-      .qr canvas,
-      .qr img {
-        width: 100%;
-        height: 100%;
-        max-width: 220px;
-        max-height: 220px;
-        border-radius: 12px;
-        background: #050914;
-      }
-
-      .qr.qr-empty {
-        color: var(--muted);
-        font-size: 0.85rem;
-        text-align: center;
-      }
-
+      .history,
       .address-list {
         list-style: none;
         display: grid;
-        gap: 10px;
+        gap: 8px;
       }
 
+      .history-item,
       .address-item {
-        padding: 10px 12px;
-        border-radius: 10px;
-        background: rgba(10, 16, 34, 0.6);
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        align-items: flex-start;
-        font-size: 0.9rem;
-        border: 1px solid rgba(123, 231, 255, 0.12);
-      }
-
-      .address-item code {
-        color: var(--accent);
-        font-size: 0.85rem;
-      }
-
-      .history {
-        list-style: none;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #d1d1d1;
+        background: #ffffff;
         display: grid;
-        gap: 12px;
-      }
-
-      .history-item {
-        padding: 12px;
-        border-radius: 12px;
-        background: rgba(10, 16, 34, 0.6);
-        display: grid;
-        gap: 6px;
+        gap: 4px;
       }
 
       .history-meta {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        font-size: 0.78rem;
         color: var(--muted);
-        font-size: 0.85rem;
       }
 
-      .status-pill,
       .tx-status {
-        padding: 4px 10px;
+        padding: 2px 8px;
         border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 600;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
+        font-weight: 600;
       }
 
-      .status-pill.confirmed,
       .tx-status.confirmed {
-        background: rgba(66, 255, 179, 0.16);
-        color: var(--accent-3);
+        background: #e9f7ee;
+        color: var(--success);
       }
 
-      .status-pill.pending,
       .tx-status.pending {
-        background: rgba(255, 211, 105, 0.16);
+        background: #fdf2e3;
         color: var(--warning);
       }
 
-      .status-pill.failed,
-      .tx-status.failed {
-        background: rgba(255, 107, 145, 0.16);
-        color: var(--danger);
+      .receive-grid {
+        display: grid;
+        grid-template-columns: minmax(180px, 220px) 1fr;
+        gap: 14px;
+      }
+
+      .qr {
+        border: 1px dashed #c2c2c2;
+        border-radius: 8px;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        min-height: 180px;
+      }
+
+      .qr.qr-empty {
+        color: var(--muted);
+        font-size: 0.8rem;
+        text-align: center;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+
+      .table th,
+      .table td {
+        padding: 8px;
+        border-bottom: 1px solid #d6d6d6;
+        text-align: left;
+      }
+
+      .table th {
+        color: var(--muted);
+        font-weight: 600;
+        background: #f4f4f4;
       }
 
       .network-grid {
         display: grid;
-        gap: 10px;
+        gap: 8px;
       }
 
       .network-row {
         display: flex;
         justify-content: space-between;
-        color: var(--muted);
-      }
-
-      .network-card {
-        overflow: visible;
-      }
-
-      .metric-tooltip {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        color: var(--text);
-        cursor: help;
-      }
-
-      .metric-tooltip::before,
-      .metric-tooltip::after {
-        position: absolute;
-        left: 50%;
-        opacity: 0;
-        pointer-events: none;
-        transform: translate(-50%, -4px);
-        transition: opacity 0.2s ease, transform 0.2s ease;
-      }
-
-      .metric-tooltip::before {
-        content: "";
-        bottom: calc(100% + 4px);
-        border-width: 6px 6px 0 6px;
-        border-style: solid;
-        border-color: rgba(15, 22, 40, 0.95) transparent transparent transparent;
-      }
-
-      .metric-tooltip::after {
-        content: attr(data-tooltip);
-        bottom: calc(100% + 10px);
-        padding: 8px 10px;
-        border-radius: 10px;
-        background: rgba(15, 22, 40, 0.95);
-        border: 1px solid rgba(123, 231, 255, 0.25);
-        color: var(--text);
-        font-size: 0.78rem;
-        line-height: 1.35;
-        min-width: 160px;
-        max-width: 220px;
-        text-align: center;
-        z-index: 10;
-        white-space: normal;
-      }
-
-      .metric-tooltip:focus::before,
-      .metric-tooltip:focus::after,
-      .metric-tooltip:hover::before,
-      .metric-tooltip:hover::after {
-        opacity: 1;
-        transform: translate(-50%, -10px);
-      }
-
-      .network-progress {
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        font-size: 0.82rem;
+        color: #333;
       }
 
       .progress-track {
-        flex: 1;
         height: 8px;
+        background: #ececec;
         border-radius: 999px;
-        background: rgba(5, 9, 20, 0.85);
-        border: 1px solid rgba(123, 231, 255, 0.18);
         overflow: hidden;
+        border: 1px solid #d2d2d2;
       }
 
       .progress-fill {
         display: block;
         height: 100%;
         width: 0%;
-        background: var(--accent);
-        transition: width 0.3s ease, background 0.3s ease;
-      }
-
-      .progress-fill.success {
-        background: var(--accent-3);
-      }
-
-      .progress-fill.warning {
-        background: var(--warning);
+        background: var(--accent-2);
       }
 
       .progress-chip {
-        padding: 4px 10px;
-        border-radius: 999px;
         font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        border: 1px solid rgba(123, 231, 255, 0.35);
-        color: var(--accent);
-        background: rgba(123, 231, 255, 0.1);
-        white-space: nowrap;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid #bfcfe0;
+        color: var(--accent-2);
+        background: #e8f0f7;
       }
 
-      .progress-chip.success {
-        border-color: rgba(66, 255, 179, 0.4);
-        color: var(--accent-3);
-        background: rgba(66, 255, 179, 0.12);
-      }
-
-      .progress-chip.warning {
-        border-color: rgba(255, 211, 105, 0.4);
-        color: var(--warning);
-        background: rgba(255, 211, 105, 0.12);
-      }
-
-      .seed-box {
-        padding: 12px;
-        border-radius: 12px;
-        background: rgba(5, 9, 20, 0.85);
-        border: 1px dashed rgba(123, 231, 255, 0.4);
-        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
-        font-size: 0.9rem;
-        color: var(--accent);
+      .status-message {
+        font-size: 0.78rem;
+        color: var(--muted);
       }
 
       footer {
-        text-align: center;
+        padding: 12px 16px;
+        border-top: 1px solid #c2c2c2;
+        background: #f3f3f3;
+        font-size: 0.8rem;
         color: var(--muted);
-        font-size: 0.85rem;
-        padding-top: 8px;
       }
 
-      .peer-details {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        color: var(--muted);
-        font-size: 0.85rem;
-      }
-
-      @media (max-width: 960px) {
+      @media (max-width: 900px) {
         .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .receive-grid {
           grid-template-columns: 1fr;
         }
       }
@@ -715,443 +476,265 @@
       <div class="app-window">
         <header class="menu-bar">
           <ul class="menu-list" aria-label="Menú principal">
-            <li class="menu-item">Archivo</li>
-            <li class="menu-item">Ajustes</li>
-            <li class="menu-item">Ventana</li>
-            <li class="menu-item">Ayuda</li>
+            <li>Archivo</li>
+            <li>Ajustes</li>
+            <li>Ventana</li>
+            <li>Ayuda</li>
           </ul>
           <div class="window-title">
-            <h1>Bitcoin Core · Centro de wallet</h1>
-            <span>Vista general inspirada en la interfaz clásica de Bitcoin Core.</span>
+            <h1>Bitcoin Core 25.0</h1>
+            <span>Maqueta UI · Vista clásica de escritorio</span>
           </div>
         </header>
 
         <div class="toolbar">
-          <div class="toolbar-group" role="tablist" aria-label="Acciones principales">
-            <button class="toolbar-button active" type="button">Resumen</button>
-            <button class="toolbar-button" type="button">Enviar</button>
-            <button class="toolbar-button" type="button">Recibir</button>
-            <button class="toolbar-button" type="button">Transacciones</button>
+          <div class="toolbar-tabs" role="tablist" aria-label="Tabs principales">
+            <button class="toolbar-button active" type="button">Overview</button>
+            <button class="toolbar-button" type="button">Send</button>
+            <button class="toolbar-button" type="button">Receive</button>
+            <button class="toolbar-button" type="button">Transactions</button>
+            <button class="toolbar-button" type="button">Peers/Network</button>
           </div>
-          <div class="toolbar-group" aria-label="Estado del nodo">
-            <span class="pill success" id="network-status">Red principal · Sincronizada</span>
-            <span class="pill" id="block-height">Altura: 821,442</span>
-            <span class="pill warning" id="sync-state">Peers: 14 activos</span>
+          <div class="toolbar-status" aria-label="Estado del nodo">
+            <span class="status-chip success" id="network-status">Mainnet · Sincronizado</span>
+            <span class="status-chip" id="block-height">Bloque: 821,442</span>
+            <span class="status-chip warning" id="sync-state">Peers: 14</span>
           </div>
         </div>
 
         <div class="workspace">
           <aside class="sidebar">
-            <div class="sidebar-section">
-              <div class="sidebar-title">Secciones</div>
+            <div>
+              <div class="sidebar-title">Navegación</div>
               <ul class="nav-list">
-                <li class="nav-item active">Resumen operativo</li>
-                <li class="nav-item">Envío antifraude</li>
-                <li class="nav-item">Recepción BIP-21</li>
-                <li class="nav-item">Auditoría</li>
-                <li class="nav-item">Telemetría</li>
-                <li class="nav-item">Seguridad seed</li>
-                <li class="nav-item">Minería</li>
-                <li class="nav-item">Contratos</li>
-                <li class="nav-item">CoinJoin</li>
-                <li class="nav-item">Documentación</li>
+                <li class="nav-item active">Overview</li>
+                <li class="nav-item">Send</li>
+                <li class="nav-item">Receive</li>
+                <li class="nav-item">Transactions</li>
+                <li class="nav-item">Peers/Network</li>
               </ul>
             </div>
-            <div class="sidebar-section">
-              <div class="sidebar-title">Conexiones</div>
-              <div class="peer-details">
-                <span id="peers-inbound">Entrantes: —</span>
-                <span id="peers-outbound">Salientes: —</span>
-              </div>
+            <div>
+              <div class="sidebar-title">Conexión</div>
               <div class="sidebar-metrics">
-                <div><span>Cliente</span> <strong>bitcoin-core-01</strong></div>
-                <div><span>Perfil</span> <strong>Modo completo</strong></div>
+                <div><span>Estado</span> <strong>Conectado</strong></div>
+                <div><span>Bloques</span> <strong>99.98%</strong></div>
+                <div><span>Peers</span> <strong id="peers-inbound">Entrantes: 6</strong></div>
+                <div><span>Peers</span> <strong id="peers-outbound">Salientes: 8</strong></div>
               </div>
             </div>
           </aside>
 
           <section class="main-area">
-            <div class="tab-strip" role="tablist" aria-label="Tabs técnicas de la wallet">
-              <button class="tab-button active" type="button">Resumen operativo</button>
-              <button class="tab-button" type="button">Envío antifraude</button>
-              <button class="tab-button" type="button">Recepción BIP-21</button>
-              <button class="tab-button" type="button">Auditoría</button>
-              <button class="tab-button" type="button">Telemetría</button>
-              <button class="tab-button" type="button">Seguridad seed</button>
+            <div class="panel">
+              <h2 class="view-title">Overview</h2>
+              <div class="overview-grid">
+                <div class="summary-card">
+                  <span>Saldo disponible</span>
+                  <strong id="balance-available">1.2485 BTC</strong>
+                  <div class="helper">≈ 82,450 USD · tasa de referencia</div>
+                  <div class="balance-card">
+                    <div>
+                      <div class="helper">Dirección por defecto</div>
+                      <code id="active-address">bc1qexample...</code>
+                    </div>
+                    <button class="btn btn-secondary" type="button" id="copy-active-address">
+                      Copiar dirección
+                    </button>
+                    <div class="helper" id="active-address-status">Lista para compartir.</div>
+                  </div>
+                </div>
+                <div class="summary-card">
+                  <span>En confirmación</span>
+                  <strong id="balance-pending">0.0421 BTC</strong>
+                  <div class="helper">3 transacciones pendientes</div>
+                </div>
+                <div class="summary-card">
+                  <span>Último movimiento</span>
+                  <strong id="last-movement">-0.0150 BTC</strong>
+                  <div class="helper">hace 12 min · 3/6 confirmaciones</div>
+                </div>
+              </div>
             </div>
 
-            <div class="content-grid">
-              <section class="panel">
-                <h2>Resumen operativo del saldo</h2>
-                <div class="balance-grid">
-                  <div class="summary-card">
-                    <span>Disponible</span>
-                    <strong id="balance-available">1.2485 BTC</strong>
-                    <div class="helper">≈ 82,450 USD · spot estimado</div>
-                    <div class="balance-card">
-                      <div>
-                        <div class="helper">Dirección activa</div>
-                        <code id="active-address">bc1qexample...</code>
-                      </div>
-                      <button class="btn btn-secondary" type="button" id="copy-active-address">
-                        Copiar a portapapeles
-                      </button>
-                    </div>
-                    <div class="helper" id="active-address-status">
-                      Lista para compartir en un único canal.
-                    </div>
-                  </div>
-                  <div class="summary-card">
-                    <span>En confirmación</span>
-                    <strong id="balance-pending">0.0421 BTC</strong>
-                    <div class="helper">3 transacciones pendientes · mempool</div>
-                  </div>
-                  <div class="summary-card">
-                    <span>Último movimiento</span>
-                    <strong id="last-movement">-0.015 BTC</strong>
-                    <div class="helper">hace 12 min · confirmación 3/6</div>
-                  </div>
-                </div>
-              </section>
+            <div class="panel">
+              <h2 class="view-title">Resumen de transacciones recientes</h2>
+              <ul class="history" id="history-list"></ul>
+            </div>
 
-              <section class="panel">
-                <h2>Envío antifraude y validación de riesgo</h2>
-                <form class="form" id="send-form" novalidate>
+            <div class="panel">
+              <h2 class="view-title">Send</h2>
+              <form class="form" id="send-form" novalidate>
+                <div class="field">
+                  <label for="send-address">Enviar a</label>
+                  <input id="send-address" name="send-address" type="text" placeholder="Dirección Bitcoin" required />
+                  <div class="helper">Compatibilidad Bech32, base58 o BIP21.</div>
+                  <div class="error" id="address-error"></div>
+                </div>
+                <div class="field">
+                  <label for="send-amount">Cantidad (BTC)</label>
+                  <input
+                    id="send-amount"
+                    name="send-amount"
+                    type="number"
+                    min="0"
+                    step="0.0001"
+                    placeholder="0.0050"
+                    required
+                  />
+                  <div class="helper">Disponible: <span id="available-hint">1.2485</span> BTC</div>
+                  <div class="error" id="amount-error"></div>
+                </div>
+                <div class="field">
+                  <label for="send-fee">Tarifa</label>
+                  <select id="send-fee" name="send-fee" required>
+                    <option value="5">Económica (5 sat/vB)</option>
+                    <option value="12" selected>Estándar (12 sat/vB)</option>
+                    <option value="25">Prioritaria (25 sat/vB)</option>
+                  </select>
+                  <div class="error" id="fee-error"></div>
+                </div>
+                <div class="field">
+                  <label for="send-note">Etiqueta</label>
+                  <textarea id="send-note" name="send-note" placeholder="Nota interna"></textarea>
+                </div>
+                <div class="status-message" id="form-status">
+                  Listo para firmar y transmitir.
+                </div>
+                <div>
+                  <button class="btn btn-primary" type="submit">Enviar</button>
+                  <button class="btn btn-secondary" type="button" id="estimate">Simular confirmación</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel">
+              <h2 class="view-title">Receive</h2>
+              <div class="receive-grid">
+                <div>
+                  <div class="qr" id="qr-code" aria-label="QR de recepción"></div>
+                  <div class="helper">QR BIP-21 para recibir pagos.</div>
                   <div class="field">
-                    <label for="send-address">Dirección destino</label>
+                    <label for="receive-amount">Cantidad solicitada (BTC)</label>
                     <input
-                      id="send-address"
-                      name="send-address"
-                      type="text"
-                      placeholder="bc1q..."
-                      autocomplete="off"
-                      required
-                    />
-                    <div class="helper">Validación Bech32/base58 y formato de red.</div>
-                    <div class="error" id="address-error"></div>
-                  </div>
-                  <div class="field">
-                    <label for="send-amount">Monto (BTC)</label>
-                    <input
-                      id="send-amount"
-                      name="send-amount"
+                      id="receive-amount"
+                      name="receive-amount"
                       type="number"
                       min="0"
                       step="0.0001"
-                      placeholder="0.005"
-                      required
+                      placeholder="Opcional"
                     />
-                    <div class="helper">
-                      Disponible para envío: <span id="available-hint">1.2485</span> BTC.
-                    </div>
-                    <div class="error" id="amount-error"></div>
                   </div>
-                  <div class="field">
-                    <label for="send-fee">Tarifa sugerida (sat/vB)</label>
-                    <select id="send-fee" name="send-fee" required>
-                      <option value="5">5 sat/vB · económico</option>
-                      <option value="12" selected>12 sat/vB · estándar</option>
-                      <option value="25">25 sat/vB · prioritario</option>
-                    </select>
-                    <div class="helper">Se recalcula el ETA según el estado del mempool.</div>
-                    <div class="error" id="fee-error"></div>
+                </div>
+                <div>
+                  <strong>Direcciones disponibles</strong>
+                  <ul class="address-list" id="address-list"></ul>
+                  <div class="helper" id="receive-status">
+                    Comparte una dirección a la vez.
                   </div>
-                  <div class="field">
-                    <label for="send-note">Nota interna</label>
-                    <textarea
-                      id="send-note"
-                      name="send-note"
-                      placeholder="Pago a proveedor, ahorro, etc."
-                    ></textarea>
-                  </div>
-                  <div class="cta">
-                    <button class="btn btn-primary" type="submit">Enviar con validación</button>
-                    <button class="btn btn-secondary" type="button" id="estimate">
-                      Simular confirmación
-                    </button>
-                  </div>
-                  <div class="helper" id="form-status">
-                    Listo para firmar, validar riesgo y transmitir.
-                  </div>
-                </form>
-              </section>
-
-              <section class="panel">
-                <h2>Recepción BIP-21 y rotación de direcciones</h2>
-                <div class="receive-grid">
                   <div>
-                    <div class="qr" id="qr-code" aria-label="Código QR para recibir"></div>
-                    <div class="helper">
-                      Escanea con wallets compatibles con BIP-21 y QR estándar.
-                    </div>
-                    <div class="field">
-                      <label for="receive-amount">Monto solicitado (BTC)</label>
-                      <input
-                        id="receive-amount"
-                        name="receive-amount"
-                        type="number"
-                        min="0"
-                        step="0.0001"
-                        placeholder="Opcional"
-                      />
-                      <div class="helper">
-                        Se añadirá al QR como URI BIP-21 si indicas un monto.
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form">
-                    <div>
-                      <strong>Direcciones activas y en reserva</strong>
-                      <ul class="address-list" id="address-list"></ul>
-                    </div>
-                    <div class="cta">
-                      <button class="btn btn-secondary" type="button" id="copy-address">
-                        Copiar dirección
-                      </button>
-                      <button class="btn btn-primary" type="button" id="new-address">
-                        Rotar dirección
-                      </button>
-                    </div>
-                    <div class="helper" id="receive-status">
-                      Comparte una dirección a la vez para mejorar la privacidad.
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="panel">
-                <h2>Auditoría de transacciones</h2>
-                <div class="helper">
-                  Revisa el registro de entradas y salidas para conciliación contable.
-                </div>
-                <ul class="history" id="history-list"></ul>
-              </section>
-
-              <section class="panel network-card">
-                <h2>Telemetría de red</h2>
-                <div class="network-grid" id="network-grid">
-                  <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
-                  <div class="network-row">
-                    <span>Sincronización</span><strong id="sync-percent">99.98%</strong>
-                  </div>
-                  <div class="network-progress" aria-label="Progreso de verificación">
-                    <div class="progress-track">
-                      <span class="progress-fill warning" id="sync-progress" style="width: 0%"></span>
-                    </div>
-                    <span class="progress-chip warning" id="sync-chip">Sincronizando</span>
-                  </div>
-                  <div class="network-row">
-                    <span>Latencia media</span>
-                    <strong>
-                      <span
-                        id="latency"
-                        class="metric-tooltip"
-                        title="No disponible"
-                        data-tooltip="No disponible"
-                        tabindex="0"
-                      >
-                        182 ms
-                      </span>
-                    </strong>
-                  </div>
-                  <div class="network-row">
-                    <span>MemPool</span>
-                    <strong>
-                      <span
-                        id="mempool"
-                        class="metric-tooltip"
-                        title="No disponible"
-                        data-tooltip="No disponible"
-                        tabindex="0"
-                      >
-                        123 MB
-                      </span>
-                    </strong>
-                  </div>
-                  <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
-                </div>
-              </section>
-
-              <section class="panel" id="seed-section">
-                <h2>Seguridad de claves y seed</h2>
-                <div class="form">
-                  <div>
-                    <div class="helper">Seed cifrada (12 palabras · almacenamiento en frío)</div>
-                    <div class="seed-box" id="seed-phrase">•••• •••• •••• •••• •••• ••••</div>
-                  </div>
-                  <div class="cta">
-                    <button class="btn btn-secondary" type="button" id="toggle-seed">
-                      Mostrar seed
+                    <button class="btn btn-secondary" type="button" id="copy-address">
+                      Copiar dirección
                     </button>
-                    <button class="btn btn-primary" type="button" id="backup-seed">
-                      Exportar respaldo
+                    <button class="btn btn-primary" type="button" id="new-address">
+                      Nueva dirección
                     </button>
                   </div>
-                  <div class="helper" id="seed-status">
-                    Guarda tu seed fuera de línea y verifica el respaldo cifrado.
-                  </div>
                 </div>
-              </section>
+              </div>
+            </div>
 
-              <section class="panel">
-                <h2>Minería y operación del rig</h2>
-                <div class="helper">
-                  Configura el pool, la capacidad del rig y la dirección de cobro principal.
-                </div>
-                <form class="form" id="mining-form" novalidate>
-                  <div class="field">
-                    <label for="mining-pool">Pool o nodo de minería</label>
-                    <input
-                      id="mining-pool"
-                      name="mining-pool"
-                      type="url"
-                      placeholder="stratum+tcp://pool.example.com:3333"
-                      required
-                    />
-                    <div class="helper">Define el endpoint para enviar shares y reportes.</div>
-                  </div>
-                  <div class="field">
-                    <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
-                    <input
-                      id="mining-hashrate"
-                      name="mining-hashrate"
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      placeholder="110.5"
-                      required
-                    />
-                    <div class="helper">Se usa para estimar tiempos de producción y consumo.</div>
-                  </div>
-                  <div class="field">
-                    <label for="mining-payout">Dirección de cobro</label>
-                    <input
-                      id="mining-payout"
-                      name="mining-payout"
-                      type="text"
-                      placeholder="bc1q..."
-                      required
-                    />
-                    <div class="helper">Recibirás recompensas en esta dirección.</div>
-                  </div>
-                  <div class="cta">
-                    <button class="btn btn-primary" type="submit">Activar monitoreo</button>
-                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
-                  </div>
-                  <div class="status-message helper" id="mining-status">
-                    Configura el pool y los parámetros del rig para iniciar métricas.
-                  </div>
-                </form>
-              </section>
+            <div class="panel">
+              <h2 class="view-title">Transactions</h2>
+              <table class="table" aria-label="Tabla de transacciones">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Dirección</th>
+                    <th>Cantidad</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2024-04-18 09:12</td>
+                    <td>Enviada</td>
+                    <td>bc1q9...m8l</td>
+                    <td>-0.0150 BTC</td>
+                    <td><span class="tx-status pending">Pendiente</span></td>
+                  </tr>
+                  <tr>
+                    <td>2024-04-17 18:42</td>
+                    <td>Recibida</td>
+                    <td>bc1q2...v9s</td>
+                    <td>+0.0421 BTC</td>
+                    <td><span class="tx-status confirmed">Confirmada</span></td>
+                  </tr>
+                  <tr>
+                    <td>2024-04-16 13:05</td>
+                    <td>Recibida</td>
+                    <td>bc1q7...t2p</td>
+                    <td>+0.2650 BTC</td>
+                    <td><span class="tx-status confirmed">Confirmada</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-              <section class="panel">
-                <h2>Contratos y scripts de custodia</h2>
-                <div class="helper">
-                  Diseña plantillas de custodia con montos, vencimientos y firmantes definidos.
+            <div class="panel">
+              <h2 class="view-title">Peers/Network</h2>
+              <div class="network-grid" id="network-grid">
+                <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
+                <div class="network-row"><span>Sincronización</span><strong id="sync-percent">99.98%</strong></div>
+                <div class="network-row">
+                  <span>Progreso</span>
+                  <span class="progress-chip" id="sync-chip">Sincronizando</span>
                 </div>
-                <form class="form" id="contracts-form" novalidate>
-                  <div class="field">
-                    <label for="contracts-template">Plantilla de contrato</label>
-                    <textarea
-                      id="contracts-template"
-                      name="contracts-template"
-                      placeholder="Incluye cláusulas, participantes, timelocks y condiciones..."
-                      required
-                    ></textarea>
-                    <div class="helper">Base para construir un script y definir firmantes.</div>
-                  </div>
-                  <div class="field">
-                    <label for="contracts-amount">Monto bloqueado (BTC)</label>
-                    <input
-                      id="contracts-amount"
-                      name="contracts-amount"
-                      type="number"
-                      min="0"
-                      step="0.0001"
-                      placeholder="0.2500"
-                      required
-                    />
-                  </div>
-                  <div class="field">
-                    <label for="contracts-expiry">Vencimiento</label>
-                    <input id="contracts-expiry" name="contracts-expiry" type="date" required />
-                    <div class="helper">Define la fecha límite o timelock para liberar fondos.</div>
-                  </div>
-                  <div class="cta">
-                    <button class="btn btn-primary" type="submit">Crear borrador técnico</button>
-                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
-                  </div>
-                  <div class="status-message helper" id="contracts-status">
-                    Prepara una plantilla clara y revisa el script antes de firmar.
-                  </div>
-                </form>
-              </section>
-
-              <section class="panel">
-                <h2>CoinJoin y privacidad avanzada</h2>
-                <div class="helper">
-                  Coordina entradas, salidas y rondas para maximizar la privacidad del mix.
+                <div class="progress-track" aria-label="Progreso de sincronización">
+                  <span class="progress-fill" id="sync-progress" style="width: 0%"></span>
                 </div>
-                <form class="form" id="coinjoin-form" novalidate>
-                  <div class="field">
-                    <label for="coinjoin-inputs">Inputs seleccionados</label>
-                    <textarea
-                      id="coinjoin-inputs"
-                      name="coinjoin-inputs"
-                      placeholder="UTXO1, UTXO2, UTXO3..."
-                      required
-                    ></textarea>
-                    <div class="helper">Lista de UTXOs que participarán en el mix.</div>
-                  </div>
-                  <div class="field">
-                    <label for="coinjoin-outputs">Outputs objetivo</label>
-                    <textarea
-                      id="coinjoin-outputs"
-                      name="coinjoin-outputs"
-                      placeholder="bc1q..., bc1q..."
-                      required
-                    ></textarea>
-                    <div class="helper">Define las direcciones de salida para el CoinJoin.</div>
-                  </div>
-                  <div class="field">
-                    <label for="coinjoin-rounds">Rondas de mezcla</label>
-                    <select id="coinjoin-rounds" name="coinjoin-rounds" required>
-                      <option value="2">2 rondas · rápido</option>
-                      <option value="4" selected>4 rondas · equilibrado</option>
-                      <option value="6">6 rondas · privado</option>
-                    </select>
-                    <div class="helper">A mayor cantidad de rondas, más privacidad.</div>
-                  </div>
-                  <div class="cta">
-                    <button class="btn btn-primary" type="submit">Coordinar sesión</button>
-                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
-                  </div>
-                  <div class="status-message helper" id="coinjoin-status">
-                    Selecciona inputs y outputs antes de coordinar el mix.
-                  </div>
-                </form>
-              </section>
-
-              <section class="panel">
-                <h2>Documentación técnica</h2>
-                <div class="helper">
-                  Explora el documento original y documentación técnica para el equipo.
-                </div>
-                <a
-                  class="link"
-                  href="https://bitcoin.org/bitcoin.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Leer el Whitepaper
-                </a>
-              </section>
+                <div class="network-row"><span>Latencia</span><strong id="latency">182 ms</strong></div>
+                <div class="network-row"><span>MemPool</span><strong id="mempool">123 MB</strong></div>
+                <div class="network-row"><span>Próximo bloque</span><strong id="next-block">~8 min</strong></div>
+              </div>
+              <table class="table" aria-label="Tabla de peers">
+                <thead>
+                  <tr>
+                    <th>IP</th>
+                    <th>Subred</th>
+                    <th>Ping</th>
+                    <th>Bloques</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>93.184.216.34</td>
+                    <td>IPv4</td>
+                    <td>142 ms</td>
+                    <td>821,442</td>
+                  </tr>
+                  <tr>
+                    <td>2606:4700:4700::1111</td>
+                    <td>IPv6</td>
+                    <td>188 ms</td>
+                    <td>821,441</td>
+                  </tr>
+                  <tr>
+                    <td>192.0.2.25</td>
+                    <td>Tor</td>
+                    <td>310 ms</td>
+                    <td>821,441</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
         </div>
 
         <footer>
-          Panel diseñado para operaciones diarias, seguridad reforzada y control total sobre tu wallet.
+          Referencia visual basada en Bitcoin Core 25.0 · Elementos clave: pestañas laterales, resumen de saldo,
+          tabla de transacciones y estado de red.
         </footer>
       </div>
     </main>
