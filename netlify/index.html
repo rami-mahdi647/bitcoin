@@ -744,12 +744,16 @@
             <div class="sidebar-section">
               <div class="sidebar-title">Secciones</div>
               <ul class="nav-list">
-                <li class="nav-item active">Resumen</li>
-                <li class="nav-item">Enviar</li>
-                <li class="nav-item">Recibir</li>
-                <li class="nav-item">Transacciones</li>
-                <li class="nav-item">Red</li>
-                <li class="nav-item">Seed</li>
+                <li class="nav-item active">Resumen operativo</li>
+                <li class="nav-item">Envío antifraude</li>
+                <li class="nav-item">Recepción BIP-21</li>
+                <li class="nav-item">Auditoría</li>
+                <li class="nav-item">Telemetría</li>
+                <li class="nav-item">Seguridad seed</li>
+                <li class="nav-item">Minería</li>
+                <li class="nav-item">Contratos</li>
+                <li class="nav-item">CoinJoin</li>
+                <li class="nav-item">Documentación</li>
               </ul>
             </div>
             <div class="sidebar-section">
@@ -766,49 +770,51 @@
           </aside>
 
           <section class="main-area">
-            <div class="tab-strip" role="tablist" aria-label="Tabs de la wallet">
-              <button class="tab-button active" type="button">Resumen</button>
-              <button class="tab-button" type="button">Enviar</button>
-              <button class="tab-button" type="button">Recibir</button>
-              <button class="tab-button" type="button">Historial</button>
-              <button class="tab-button" type="button">Red</button>
-              <button class="tab-button" type="button">Seguridad</button>
+            <div class="tab-strip" role="tablist" aria-label="Tabs técnicas de la wallet">
+              <button class="tab-button active" type="button">Resumen operativo</button>
+              <button class="tab-button" type="button">Envío antifraude</button>
+              <button class="tab-button" type="button">Recepción BIP-21</button>
+              <button class="tab-button" type="button">Auditoría</button>
+              <button class="tab-button" type="button">Telemetría</button>
+              <button class="tab-button" type="button">Seguridad seed</button>
             </div>
 
             <div class="content-grid">
               <section class="panel">
-                <h2>Resumen de saldo</h2>
+                <h2>Resumen operativo del saldo</h2>
                 <div class="balance-grid">
                   <div class="summary-card">
                     <span>Disponible</span>
                     <strong id="balance-available">1.2485 BTC</strong>
-                    <div class="helper">≈ 82,450 USD</div>
+                    <div class="helper">≈ 82,450 USD · spot estimado</div>
                     <div class="balance-card">
                       <div>
                         <div class="helper">Dirección activa</div>
                         <code id="active-address">bc1qexample...</code>
                       </div>
                       <button class="btn btn-secondary" type="button" id="copy-active-address">
-                        Copiar dirección
+                        Copiar a portapapeles
                       </button>
                     </div>
-                    <div class="helper" id="active-address-status">Lista para compartir.</div>
+                    <div class="helper" id="active-address-status">
+                      Lista para compartir en un único canal.
+                    </div>
                   </div>
                   <div class="summary-card">
                     <span>En confirmación</span>
                     <strong id="balance-pending">0.0421 BTC</strong>
-                    <div class="helper">3 transacciones pendientes</div>
+                    <div class="helper">3 transacciones pendientes · mempool</div>
                   </div>
                   <div class="summary-card">
                     <span>Último movimiento</span>
                     <strong id="last-movement">-0.015 BTC</strong>
-                    <div class="helper">hace 12 min</div>
+                    <div class="helper">hace 12 min · confirmación 3/6</div>
                   </div>
                 </div>
               </section>
 
               <section class="panel">
-                <h2>Enviar fondos</h2>
+                <h2>Envío antifraude y validación de riesgo</h2>
                 <form class="form" id="send-form" novalidate>
                   <div class="field">
                     <label for="send-address">Dirección destino</label>
@@ -820,7 +826,7 @@
                       autocomplete="off"
                       required
                     />
-                    <div class="helper">Asegúrate de pegar una dirección válida de Bitcoin.</div>
+                    <div class="helper">Validación Bech32/base58 y formato de red.</div>
                     <div class="error" id="address-error"></div>
                   </div>
                   <div class="field">
@@ -846,7 +852,7 @@
                       <option value="12" selected>12 sat/vB · estándar</option>
                       <option value="25">25 sat/vB · prioritario</option>
                     </select>
-                    <div class="helper">Se recalculará el tiempo estimado según la red.</div>
+                    <div class="helper">Se recalcula el ETA según el estado del mempool.</div>
                     <div class="error" id="fee-error"></div>
                   </div>
                   <div class="field">
@@ -858,21 +864,25 @@
                     ></textarea>
                   </div>
                   <div class="cta">
-                    <button class="btn btn-primary" type="submit">Enviar ahora</button>
+                    <button class="btn btn-primary" type="submit">Enviar con validación</button>
                     <button class="btn btn-secondary" type="button" id="estimate">
-                      Calcular tiempo
+                      Simular confirmación
                     </button>
                   </div>
-                  <div class="helper" id="form-status">Listo para firmar y transmitir.</div>
+                  <div class="helper" id="form-status">
+                    Listo para firmar, validar riesgo y transmitir.
+                  </div>
                 </form>
               </section>
 
               <section class="panel">
-                <h2>Recibir fondos</h2>
+                <h2>Recepción BIP-21 y rotación de direcciones</h2>
                 <div class="receive-grid">
                   <div>
                     <div class="qr" id="qr-code" aria-label="Código QR para recibir"></div>
-                    <div class="helper">Escanea con cualquier wallet para recibir BTC.</div>
+                    <div class="helper">
+                      Escanea con wallets compatibles con BIP-21 y QR estándar.
+                    </div>
                     <div class="field">
                       <label for="receive-amount">Monto solicitado (BTC)</label>
                       <input
@@ -883,12 +893,14 @@
                         step="0.0001"
                         placeholder="Opcional"
                       />
-                      <div class="helper">Se añadirá al QR como URI BIP-21 si indicas un monto.</div>
+                      <div class="helper">
+                        Se añadirá al QR como URI BIP-21 si indicas un monto.
+                      </div>
                     </div>
                   </div>
                   <div class="form">
                     <div>
-                      <strong>Direcciones activas</strong>
+                      <strong>Direcciones activas y en reserva</strong>
                       <ul class="address-list" id="address-list"></ul>
                     </div>
                     <div class="cta">
@@ -896,21 +908,26 @@
                         Copiar dirección
                       </button>
                       <button class="btn btn-primary" type="button" id="new-address">
-                        Generar nueva
+                        Rotar dirección
                       </button>
                     </div>
-                    <div class="helper" id="receive-status">Comparte solo una dirección a la vez.</div>
+                    <div class="helper" id="receive-status">
+                      Comparte una dirección a la vez para mejorar la privacidad.
+                    </div>
                   </div>
                 </div>
               </section>
 
               <section class="panel">
-                <h2>Historial de transacciones</h2>
+                <h2>Auditoría de transacciones</h2>
+                <div class="helper">
+                  Revisa el registro de entradas y salidas para conciliación contable.
+                </div>
                 <ul class="history" id="history-list"></ul>
               </section>
 
               <section class="panel network-card">
-                <h2>Estado de red</h2>
+                <h2>Telemetría de red</h2>
                 <div class="network-grid" id="network-grid">
                   <div class="network-row"><span>Nodo</span><strong>bitcoin-core-01</strong></div>
                   <div class="network-row">
@@ -955,10 +972,10 @@
               </section>
 
               <section class="panel" id="seed-section">
-                <h2>Gestión de claves y seed</h2>
+                <h2>Seguridad de claves y seed</h2>
                 <div class="form">
                   <div>
-                    <div class="helper">Seed cifrada (12 palabras)</div>
+                    <div class="helper">Seed cifrada (12 palabras · almacenamiento en frío)</div>
                     <div class="seed-box" id="seed-phrase">•••• •••• •••• •••• •••• ••••</div>
                   </div>
                   <div class="cta">
@@ -966,17 +983,17 @@
                       Mostrar seed
                     </button>
                     <button class="btn btn-primary" type="button" id="backup-seed">
-                      Respaldar seed
+                      Exportar respaldo
                     </button>
                   </div>
                   <div class="helper" id="seed-status">
-                    Guarda tu seed fuera de línea y nunca la compartas.
+                    Guarda tu seed fuera de línea y verifica el respaldo cifrado.
                   </div>
                 </div>
               </section>
 
               <section class="panel">
-                <h2>Minería</h2>
+                <h2>Minería y operación del rig</h2>
                 <form class="form" id="mining-form" novalidate>
                   <div class="field">
                     <label for="mining-pool">Pool o nodo de minería</label>
@@ -987,7 +1004,7 @@
                       placeholder="stratum+tcp://pool.example.com:3333"
                       required
                     />
-                    <div class="helper">Define el endpoint para enviar tus shares.</div>
+                    <div class="helper">Define el endpoint para enviar shares y reportes.</div>
                   </div>
                   <div class="field">
                     <label for="mining-hashrate">Hashrate objetivo (TH/s)</label>
@@ -1000,7 +1017,7 @@
                       placeholder="110.5"
                       required
                     />
-                    <div class="helper">Usado para estimar tiempos de producción.</div>
+                    <div class="helper">Se usa para estimar tiempos de producción y consumo.</div>
                   </div>
                   <div class="field">
                     <label for="mining-payout">Dirección de cobro</label>
@@ -1014,27 +1031,27 @@
                     <div class="helper">Recibirás recompensas en esta dirección.</div>
                   </div>
                   <div class="cta">
-                    <button class="btn btn-primary" type="submit">Activar minería</button>
-                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                    <button class="btn btn-primary" type="submit">Activar monitoreo</button>
+                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
                   <div class="status-message" id="mining-status">
-                    Configura el pool y los parámetros de tu rig.
+                    Configura el pool y los parámetros del rig para iniciar métricas.
                   </div>
                 </form>
               </section>
 
               <section class="panel">
-                <h2>Contratos</h2>
+                <h2>Contratos y scripts de custodia</h2>
                 <form class="form" id="contracts-form" novalidate>
                   <div class="field">
                     <label for="contracts-template">Plantilla de contrato</label>
                     <textarea
                       id="contracts-template"
                       name="contracts-template"
-                      placeholder="Incluye cláusulas, participantes y condiciones..."
+                      placeholder="Incluye cláusulas, participantes, timelocks y condiciones..."
                       required
                     ></textarea>
-                    <div class="helper">Base para construir un script y sus firmantes.</div>
+                    <div class="helper">Base para construir un script y definir firmantes.</div>
                   </div>
                   <div class="field">
                     <label for="contracts-amount">Monto bloqueado (BTC)</label>
@@ -1051,20 +1068,20 @@
                   <div class="field">
                     <label for="contracts-expiry">Vencimiento</label>
                     <input id="contracts-expiry" name="contracts-expiry" type="date" required />
-                    <div class="helper">Define la fecha límite para liberar fondos.</div>
+                    <div class="helper">Define la fecha límite o timelock para liberar fondos.</div>
                   </div>
                   <div class="cta">
-                    <button class="btn btn-primary" type="submit">Crear borrador</button>
-                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                    <button class="btn btn-primary" type="submit">Crear borrador técnico</button>
+                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
                   <div class="status-message" id="contracts-status">
-                    Prepara una plantilla clara antes de solicitar firmas.
+                    Prepara una plantilla clara y revisa el script antes de firmar.
                   </div>
                 </form>
               </section>
 
               <section class="panel">
-                <h2>CoinJoin</h2>
+                <h2>CoinJoin y privacidad avanzada</h2>
                 <form class="form" id="coinjoin-form" novalidate>
                   <div class="field">
                     <label for="coinjoin-inputs">Inputs seleccionados</label>
@@ -1096,8 +1113,8 @@
                     <div class="helper">A mayor cantidad de rondas, más privacidad.</div>
                   </div>
                   <div class="cta">
-                    <button class="btn btn-primary" type="submit">Iniciar CoinJoin</button>
-                    <button class="btn btn-secondary" type="reset">Limpiar</button>
+                    <button class="btn btn-primary" type="submit">Coordinar sesión</button>
+                    <button class="btn btn-secondary" type="reset">Reiniciar</button>
                   </div>
                   <div class="status-message" id="coinjoin-status">
                     Selecciona inputs y outputs antes de coordinar el mix.
@@ -1106,9 +1123,9 @@
               </section>
 
               <section class="panel">
-                <h2>Aprende sobre Bitcoin</h2>
+                <h2>Documentación técnica</h2>
                 <div class="helper">
-                  Explora el documento original para entender los fundamentos de la red y su diseño.
+                  Explora el documento original y documentación técnica para el equipo.
                 </div>
                 <a
                   class="link"
