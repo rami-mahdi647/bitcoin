@@ -72,6 +72,10 @@ const coinjoinInputsInput = document.getElementById("coinjoin-inputs");
 const coinjoinOutputsInput = document.getElementById("coinjoin-outputs");
 const coinjoinRoundsSelect = document.getElementById("coinjoin-rounds");
 const coinjoinStatus = document.getElementById("coinjoin-status");
+const toolbarTabs = document.querySelector(".toolbar-tabs");
+const sidebarNav = document.querySelector(".nav-list");
+const tabTriggers = Array.from(document.querySelectorAll("[data-tab]"));
+const tabPanels = Array.from(document.querySelectorAll("[data-panel]"));
 
 let seedVisible = false;
 let seedWordsCache = [];
@@ -137,6 +141,28 @@ const updateFeeLabels = () => {
       `(${match[1]} ${currencyConfig.feeUnitLabel})`,
     );
   });
+};
+
+const setActiveTab = (tabId) => {
+  if (!tabId) {
+    return;
+  }
+  tabTriggers.forEach((trigger) => {
+    const isActive = trigger.dataset.tab === tabId;
+    trigger.classList.toggle("active", isActive);
+    trigger.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+  tabPanels.forEach((panel) => {
+    panel.hidden = panel.dataset.panel !== tabId;
+  });
+};
+
+const handleTabClick = (event) => {
+  const trigger = event.target.closest("[data-tab]");
+  if (!trigger) {
+    return;
+  }
+  setActiveTab(trigger.dataset.tab);
 };
 
 const setTooltip = (element, text) => {
@@ -1179,3 +1205,13 @@ setInterval(cycleNetwork, 6000);
 
 updateAmountInputs();
 updateFeeLabels();
+
+if (toolbarTabs) {
+  toolbarTabs.addEventListener("click", handleTabClick);
+}
+if (sidebarNav) {
+  sidebarNav.addEventListener("click", handleTabClick);
+}
+
+const initialTab = tabTriggers.find((trigger) => trigger.classList.contains("active"))?.dataset.tab;
+setActiveTab(initialTab || "resumen");
