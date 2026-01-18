@@ -201,6 +201,19 @@ ANTIFRAUD_MESH_PRIVATE_KEY=base64-private-key
 remotos. Usa endpoints confiables, limita el acceso a las claves y documenta en tu política de
 privacidad qué datos se comparten.
 
+## Política de snapshots/visual tests
+
+Actualmente no hay snapshots visuales versionados en este proyecto. Si se incorporan pruebas
+visuales en el futuro, solo se deben actualizar snapshots cuando:
+
+- El cambio visual es intencional y está documentado en la PR.
+- El render es estable (sin datos aleatorios/tiempos variables) y reproducible.
+- Exista un comando oficial de re-baseline indicado en la guía de contribución o en la propia
+  documentación del repo.
+
+Si el repo no permite re-baseline automático, en lugar de actualizar snapshots se deberá ajustar
+CSS/layout para estabilizar el render antes de ejecutar las pruebas.
+
 ## RPC connectivity requirement
 
 Netlify must be able to reach the Bitcoin Core RPC endpoint over the network (publicly accessible or via an approved tunnel/VPN). A local-only node on your workstation will not be reachable from Netlify.

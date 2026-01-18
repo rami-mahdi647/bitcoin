@@ -435,4 +435,8 @@ module.exports = {
   deriveFeatures,
   parseMeshEndpoints,
   parseMeshQuorum,
+  decryptPayload,
+  encryptPayload,
+  signPayload,
+  verifySignature,
 };
