@@ -76,7 +76,68 @@ const coinjoinStatus = document.getElementById("coinjoin-status");
 let seedVisible = false;
 let seedWordsCache = [];
 
-const formatBtc = (value) => `${Number(value || 0).toFixed(4)} BTC`;
+/**
+ * Configuración de moneda:
+ * - Ajusta `decimals` y `symbol` para el formato numérico.
+ * - Ajusta `uriScheme` si Nexos usa otro esquema para QR/URI.
+ * - Ajusta `addressPrefixes`, `feeUnitLabel` y `explorerBaseUrl` si cambia la red.
+ */
+const currencyConfig = {
+  name: "Nexos",
+  symbol: "NEX",
+  decimals: 4,
+  locale: "es-ES",
+  uriScheme: "nexos",
+  addressPrefixes: ["nx1", "n1", "n3"],
+  feeUnitLabel: "nex/vB",
+  explorerBaseUrl: "https://explorer.nexos.example/tx/",
+};
+
+const formatAmountNumber = (value) => {
+  const amount = Number(value || 0);
+  return new Intl.NumberFormat(currencyConfig.locale, {
+    minimumFractionDigits: currencyConfig.decimals,
+    maximumFractionDigits: currencyConfig.decimals,
+  }).format(amount);
+};
+
+const formatAmountWithSymbol = (value) => `${formatAmountNumber(value)} ${currencyConfig.symbol}`;
+
+const formatSignedAmount = (value) => {
+  const amount = Number(value || 0);
+  const sign = amount > 0 ? "+" : amount < 0 ? "-" : "";
+  return `${sign}${formatAmountNumber(Math.abs(amount))} ${currencyConfig.symbol}`;
+};
+
+const getAmountStep = () => (currencyConfig.decimals > 0 ? 1 / 10 ** currencyConfig.decimals : 1);
+
+const getAddressPrefixHint = () => currencyConfig.addressPrefixes.join(", ");
+
+const updateAmountInputs = () => {
+  const step = String(getAmountStep());
+  if (amountInput) {
+    amountInput.step = step;
+  }
+  if (receiveAmountInput) {
+    receiveAmountInput.step = step;
+  }
+};
+
+const updateFeeLabels = () => {
+  if (!feeSelect) {
+    return;
+  }
+  Array.from(feeSelect.options).forEach((option) => {
+    const match = option.textContent.match(/\((\d+)\s*[^\)]+\)/);
+    if (!match) {
+      return;
+    }
+    option.textContent = option.textContent.replace(
+      /\((\d+)\s*[^\)]+\)/,
+      `(${match[1]} ${currencyConfig.feeUnitLabel})`,
+    );
+  });
+};
 
 const setTooltip = (element, text) => {
   if (!element) {
@@ -175,10 +236,10 @@ const updateBalances = () => {
   }
 
   const data = getWalletData();
-  availableBalance.textContent = formatBtc(data.available);
-  pendingBalance.textContent = formatBtc(data.pending);
-  lastMovement.textContent = `${data.lastMovement > 0 ? "+" : ""}${Number(data.lastMovement || 0).toFixed(4)} BTC`;
-  availableHint.textContent = Number(data.available || 0).toFixed(4);
+  availableBalance.textContent = formatAmountWithSymbol(data.available);
+  pendingBalance.textContent = formatAmountWithSymbol(data.pending);
+  lastMovement.textContent = formatSignedAmount(data.lastMovement);
+  availableHint.textContent = formatAmountNumber(data.available);
   if (activeAddressCode) {
     activeAddressCode.textContent = data.addresses[0] || "Sin dirección disponible";
   }
@@ -293,14 +354,14 @@ const getReceiveAmount = () => {
   return amount;
 };
 
-const buildBitcoinUri = (address, amount) => {
+const buildPaymentUri = (address, amount) => {
   if (!address) {
     return "";
   }
   if (!Number.isFinite(amount) || amount <= 0) {
-    return `bitcoin:${address}`;
+    return `${currencyConfig.uriScheme}:${address}`;
   }
-  return `bitcoin:${address}?amount=${amount}`;
+  return `${currencyConfig.uriScheme}:${address}?amount=${amount}`;
 };
 
 const renderQr = () => {
@@ -318,7 +379,7 @@ const renderQr = () => {
   }
 
   const amount = getReceiveAmount();
-  const payload = buildBitcoinUri(address, amount);
+  const payload = buildPaymentUri(address, amount);
   const canvas = document.createElement("canvas");
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Código QR de recepción");
@@ -359,7 +420,7 @@ const resetErrors = () => {
 
 const validateAddress = (value) => {
   const trimmed = value.trim();
-  const startsOk = trimmed.startsWith("bc1") || trimmed.startsWith("1") || trimmed.startsWith("3");
+  const startsOk = currencyConfig.addressPrefixes.some((prefix) => trimmed.startsWith(prefix));
   return trimmed.length >= 26 && startsOk;
 };
 
@@ -445,7 +506,7 @@ if (sendForm && addressInput && amountInput && feeSelect && formStatus && addres
     let hasError = false;
 
     if (!validateAddress(addressValue)) {
-      addressError.textContent = "Dirección inválida. Revisa el formato (bc1, 1 o 3).";
+      addressError.textContent = `Dirección inválida. Revisa el formato (${getAddressPrefixHint()}).`;
       hasError = true;
     }
 
@@ -1115,3 +1176,6 @@ const loadWalletSummary = async () => {
 loadWalletSummary();
 cycleNetwork();
 setInterval(cycleNetwork, 6000);
+
+updateAmountInputs();
+updateFeeLabels();
