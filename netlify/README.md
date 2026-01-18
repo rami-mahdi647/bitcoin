@@ -172,10 +172,34 @@ decision (approve / review / reject)
 
 Configure the antifraud mesh in the Netlify function environment:
 
-- `ANTIFRAUD_MESH_ENDPOINT` (mesh or aggregator endpoint URL)
+- `ANTIFRAUD_MESH_ENABLED` (`true`/`false`, default: `false`)
+- `ANTIFRAUD_MESH_ENDPOINTS` (lista de nodos; JSON array o lista separada por comas)
 - `ANTIFRAUD_MESH_PUBLIC_KEY` (Ed25519 public key, base64/hex)
 - `ANTIFRAUD_MESH_PRIVATE_KEY` (Ed25519 private key, base64/hex; keep secret)
-- `ANTIFRAUD_MESH_TIMEOUT_MS` (timeout in ms for mesh requests)
+- `ANTIFRAUD_MESH_QUORUM` (quorum esperado; ej. `21/32` o `3`)
+- `ANTIFRAUD_MESH_TIMEOUT_MS` (timeout en ms, default: `1400`)
+
+Ejemplos:
+
+```
+ANTIFRAUD_MESH_ENABLED=true
+ANTIFRAUD_MESH_ENDPOINTS=https://mesh-01.example.com,https://mesh-02.example.com
+ANTIFRAUD_MESH_PUBLIC_KEY=base64-public-key
+ANTIFRAUD_MESH_PRIVATE_KEY=base64-private-key
+ANTIFRAUD_MESH_QUORUM=2/3
+ANTIFRAUD_MESH_TIMEOUT_MS=1800
+```
+
+```
+ANTIFRAUD_MESH_ENABLED=true
+ANTIFRAUD_MESH_ENDPOINTS=[{"id":"peer-1","url":"https://mesh-01.example.com","weight":1}]
+ANTIFRAUD_MESH_PUBLIC_KEY=base64-public-key
+ANTIFRAUD_MESH_PRIVATE_KEY=base64-private-key
+```
+
+⚠️ **Privacidad:** la malla antifraude comparte señales y metadatos agregados con nodos
+remotos. Usa endpoints confiables, limita el acceso a las claves y documenta en tu política de
+privacidad qué datos se comparten.
 
 ## RPC connectivity requirement
 

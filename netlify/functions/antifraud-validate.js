@@ -2,7 +2,12 @@ const DEFAULT_THRESHOLD = 0.7;
 const DEFAULT_TIMEOUT_MS = 4500;
 const MODEL_COUNT = 32;
 
-const { blendWithMesh, collectMeshSignals } = require("./lib/antifraud-mesh");
+const {
+  blendWithMesh,
+  collectMeshSignals,
+  parseMeshEndpoints,
+  parseMeshQuorum,
+} = require("./lib/antifraud-mesh");
 
 const clamp = (value, min = 0, max = 1) => Math.min(Math.max(value, min), max);
 
@@ -76,6 +81,29 @@ const buildReason = (decision, score, threshold, signals) => {
     return `Aprobada: ${scoreLabel} por debajo del ${thresholdLabel}. Señales: ${signals.join(", ")}.`;
   }
   return `Bloqueada: ${scoreLabel} supera el ${thresholdLabel}. Señales: ${signals.join(", ")}.`;
+};
+
+const parseBoolean = (value) =>
+  typeof value === "string" ? value.trim().toLowerCase() === "true" : Boolean(value);
+
+const validateMeshConfig = () => {
+  if (!parseBoolean(process.env.ANTIFRAUD_MESH_ENABLED)) {
+    return null;
+  }
+
+  const endpoints = parseMeshEndpoints(process.env.ANTIFRAUD_MESH_ENDPOINTS);
+  if (!endpoints.length) {
+    return "Configura ANTIFRAUD_MESH_ENDPOINTS con al menos un nodo.";
+  }
+  if (!process.env.ANTIFRAUD_MESH_PUBLIC_KEY || !process.env.ANTIFRAUD_MESH_PRIVATE_KEY) {
+    return "Faltan ANTIFRAUD_MESH_PUBLIC_KEY o ANTIFRAUD_MESH_PRIVATE_KEY para la malla.";
+  }
+  const quorum = parseMeshQuorum(process.env.ANTIFRAUD_MESH_QUORUM);
+  if (quorum > endpoints.length) {
+    return "ANTIFRAUD_MESH_QUORUM supera la cantidad de nodos configurados.";
+  }
+
+  return null;
 };
 
 const runLocalEnsemble = (transaction, threshold) => {
@@ -161,6 +189,16 @@ exports.handler = async (event) => {
     return {
       statusCode: 405,
       body: JSON.stringify({ error: "Método no permitido" }),
+    };
+  }
+
+  const meshConfigError = validateMeshConfig();
+  if (meshConfigError) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: meshConfigError,
+      }),
     };
   }
 
