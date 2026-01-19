@@ -39,12 +39,83 @@ how the seed is sourced:
 
 ## Optional environment variables for new endpoints
 
-The new mock endpoints for mining, contracts, and CoinJoin do not require additional secrets.
+The mock endpoints for mining, contracts, and CoinJoin do not require additional secrets.
 If you want to label the mode shown in the UI responses, set:
 
 - `MINING_MODE` (default: `mock`)
 - `CONTRACTS_MODE` (default: `mock`)
 - `COINJOIN_MODE` (default: `mock`)
+
+## Real mining configuration and infrastructure requirements
+
+By default, `/api/mining` runs in **mock** mode. To enable real mining, set:
+
+- `MINING_MODE=real`
+- `MINING_TARGET` (`pool` or `local`)
+
+When `MINING_MODE=real`, the function **blocks** requests unless the required credentials
+are present.
+
+### Pool mining (Stratum)
+
+**Required secrets**
+
+- `MINING_POOL_USER` (pool login / worker user)
+- `MINING_POOL_PASSWORD`
+
+**Optional**
+
+- `MINING_POOL_WORKER` (default: `netlify-wallet`)
+
+**Pool URL validation**
+
+- Pool URLs must use `stratum+tcp`, `stratum+ssl`, or `stratum+tls`.
+- Do not embed credentials in the URL (use the secrets above).
+
+Example:
+
+```
+MINING_MODE=real
+MINING_TARGET=pool
+MINING_POOL_USER=worker01
+MINING_POOL_PASSWORD=super-secret
+```
+
+### Local mining worker
+
+**Required secrets**
+
+- `MINER_BINARY_PATH` (absolute path to the miner binary)
+- `MINER_API_TOKEN` (token injected into the miner env for auth)
+
+**Optional**
+
+- `MINER_ARGS` (JSON array or space-separated args passed to the miner)
+- `MINER_WORKDIR` (working directory for the miner process)
+
+Example:
+
+```
+MINING_MODE=real
+MINING_TARGET=local
+MINER_BINARY_PATH=/opt/miners/cgminer
+MINER_API_TOKEN=super-secret
+MINER_ARGS=["--url","stratum+tcp://pool.example.com:3333","--user","worker01"]
+```
+
+### Infrastructure checklist
+
+- **Mining pool access:** A reachable Stratum pool endpoint (TCP/SSL) and valid worker credentials.
+- **Miner binary:** The mining executable must be installed on the function runtime or host
+  container with execute permissions.
+- **Process control:** Ensure the platform allows spawning child processes; serverless runtimes
+  may forbid long-running workers.
+- **Permissions:** The miner binary and working directory must be readable/executable by the
+  function user.
+- **Power and cooling:** Real mining consumes significant electricity and generates heat. Plan
+  for dedicated power circuits, cooling, and monitoring.
+- **Security:** Store pool credentials and miner tokens in Netlify secrets; never hardcode them
+  in the repo.
 
 ## Antifraud ML service
 
