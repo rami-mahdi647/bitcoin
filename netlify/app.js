@@ -863,11 +863,20 @@ if (miningForm) {
         throw new Error(payload?.error || `Error del backend (${response.status})`);
       }
 
-      setStatusMessage(
-        miningStatus,
-        payload?.message || "Minería activada y monitoreo en curso.",
-        "success",
-      );
+      const miningMode = payload?.mode;
+      if (miningMode === "mock") {
+        setStatusMessage(
+          miningStatus,
+          "Minería simulada: el backend está en modo mock.",
+          "error",
+        );
+      } else {
+        setStatusMessage(
+          miningStatus,
+          payload?.message || "Minería activada y monitoreo en curso.",
+          "success",
+        );
+      }
       miningForm.reset();
     } catch (error) {
       setStatusMessage(
