@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
 # ===================================================
 # YOUPHRN OES - ORQUESTADOR PRINCIPAL (Producción)
 # Propósito: Iniciar y gestionar los servicios de RMN-3301
