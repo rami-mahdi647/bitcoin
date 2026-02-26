@@ -35,13 +35,14 @@ BOOST_AUTO_TEST_CASE(MiningInterface)
     BOOST_REQUIRE(mining);
 
     BlockAssembler::Options options;
+    options.include_dummy_extranonce = true;
     std::unique_ptr<BlockTemplate> block_template;
 
     // Set node time a few minutes past the testnet4 genesis block
     const int64_t genesis_time{WITH_LOCK(cs_main, return m_node.chainman->ActiveChain().Tip()->GetBlockTime())};
     SetMockTime(genesis_time + 3 * 60);
 
-    block_template = mining->createNewBlock(options);
+    block_template = mining->createNewBlock(options, /*cooldown=*/false);
     BOOST_REQUIRE(block_template);
 
     // The template should use the mocked system time

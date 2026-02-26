@@ -32,7 +32,7 @@ if [ -n "${APT_LLVM_V}" ]; then
   )
 fi
 
-if [[ $CI_IMAGE_NAME_TAG == *alpine* ]]; then
+if command -v apk >/dev/null 2>&1; then
   ${CI_RETRY_EXE} apk update
   # shellcheck disable=SC2086
   ${CI_RETRY_EXE} apk add --no-cache $CI_BASE_PACKAGES $PACKAGES
@@ -57,7 +57,7 @@ if [ -n "$PIP_PACKAGES" ]; then
 fi
 
 if [[ -n "${USE_INSTRUMENTED_LIBCPP}" ]]; then
-  ${CI_RETRY_EXE} git clone --depth=1 https://github.com/llvm/llvm-project -b "llvmorg-21.1.5" /llvm-project
+  ${CI_RETRY_EXE} git clone --depth=1 https://github.com/llvm/llvm-project -b "llvmorg-22.1.0" /llvm-project
 
   cmake -G Ninja -B /cxx_build/ \
     -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \

@@ -421,7 +421,7 @@ private:
     size_t m_bytes_sent GUARDED_BY(m_send_mutex) {0};
 
 public:
-    explicit V1Transport(const NodeId node_id) noexcept;
+    explicit V1Transport(NodeId node_id) noexcept;
 
     bool ReceivedMessageComplete() const override EXCLUSIVE_LOCKS_REQUIRED(!m_recv_mutex)
     {
@@ -1043,21 +1043,21 @@ public:
     virtual bool HasAllDesirableServiceFlags(ServiceFlags services) const = 0;
 
     /**
-    * Process protocol messages received from a given node
-    *
-    * @param[in]   pnode           The node which we have received messages from.
-    * @param[in]   interrupt       Interrupt condition for processing threads
-    * @return                      True if there is more work to be done
-    */
-    virtual bool ProcessMessages(CNode* pnode, std::atomic<bool>& interrupt) EXCLUSIVE_LOCKS_REQUIRED(g_msgproc_mutex) = 0;
+     * Process protocol messages received from a given node
+     *
+     * @param[in]   node            The node which we have received messages from.
+     * @param[in]   interrupt       Interrupt condition for processing threads
+     * @return                      True if there is more work to be done
+     */
+    virtual bool ProcessMessages(CNode& node, std::atomic<bool>& interrupt) EXCLUSIVE_LOCKS_REQUIRED(g_msgproc_mutex) = 0;
 
     /**
-    * Send queued protocol messages to a given node.
-    *
-    * @param[in]   pnode           The node which we are sending messages to.
-    * @return                      True if there is more work to be done
-    */
-    virtual bool SendMessages(CNode* pnode) EXCLUSIVE_LOCKS_REQUIRED(g_msgproc_mutex) = 0;
+     * Send queued protocol messages to a given node.
+     *
+     * @param[in]   node            The node which we are sending messages to.
+     * @return                      True if there is more work to be done
+     */
+    virtual bool SendMessages(CNode& node) EXCLUSIVE_LOCKS_REQUIRED(g_msgproc_mutex) = 0;
 
 
 protected:
@@ -1241,7 +1241,7 @@ public:
         /// Wait for the number of needed connections to become greater than 0.
         void NumToOpenWait() const;
 
-    private:
+    protected:
         /**
          * Check if private broadcast can be done to IPv4 or IPv6 peers and if so via which proxy.
          * If private broadcast connections should not be opened to IPv4 or IPv6, then this will
@@ -1251,6 +1251,8 @@ public:
 
         /// Number of `ConnectionType::PRIVATE_BROADCAST` connections to open.
         std::atomic_size_t m_num_to_open{0};
+
+        friend struct ConnmanTestMsg;
     } m_private_broadcast;
 
     bool CheckIncomingNonce(uint64_t nonce);
@@ -1294,7 +1296,7 @@ public:
      * @param[in] network        Select only addresses of this network (nullopt = all).
      * @param[in] filtered       Select only addresses that are considered high quality (false = all).
      */
-    std::vector<CAddress> GetAddressesUnsafe(size_t max_addresses, size_t max_pct, std::optional<Network> network, const bool filtered = true) const;
+    std::vector<CAddress> GetAddressesUnsafe(size_t max_addresses, size_t max_pct, std::optional<Network> network, bool filtered = true) const;
     /**
      * Return addresses from the per-requestor cache. If no cache entry exists, it is populated with
      * randomly selected addresses. This function can be used in untrusted contexts.
@@ -1592,7 +1594,7 @@ private:
     std::vector<ListenSocket> vhListenSocket;
     std::atomic<bool> fNetworkActive{true};
     bool fAddressesInitialized{false};
-    AddrMan& addrman;
+    std::reference_wrapper<AddrMan> addrman;
     const NetGroupManager& m_netgroupman;
     std::deque<std::string> m_addr_fetches GUARDED_BY(m_addr_fetches_mutex);
     Mutex m_addr_fetches_mutex;

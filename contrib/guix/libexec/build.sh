@@ -4,6 +4,9 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 export LC_ALL=C
 set -e -o pipefail
+
+# Environment variables for determinism
+export TAR_OPTIONS="--owner=0 --group=0 --numeric-owner --mtime='@${SOURCE_DATE_EPOCH}' --sort=name"
 export TZ=UTC
 
 # Although Guix _does_ set umask when building its own packages (in our case,
@@ -157,10 +160,6 @@ case "$HOST" in
         ;;
 esac
 
-# Environment variables for determinism
-export TAR_OPTIONS="--owner=0 --group=0 --numeric-owner --mtime='@${SOURCE_DATE_EPOCH}' --sort=name"
-export TZ="UTC"
-
 ####################
 # Depends Building #
 ####################
@@ -211,6 +210,7 @@ CONFIGFLAGS="-DREDUCE_EXPORTS=ON -DBUILD_BENCH=OFF -DBUILD_GUI_TESTS=OFF -DBUILD
 # CFLAGS
 HOST_CFLAGS="-O2 -g"
 HOST_CFLAGS+=$(find /gnu/store -maxdepth 1 -mindepth 1 -type d -exec echo -n " -ffile-prefix-map={}=/usr" \;)
+HOST_CFLAGS+=" -fdebug-prefix-map=${DISTSRC}/src=."
 case "$HOST" in
     *mingw*)  HOST_CFLAGS+=" -fno-ident" ;;
     *darwin*) unset HOST_CFLAGS ;;
@@ -400,12 +400,14 @@ mv --no-target-directory "$OUTDIR" "$ACTUAL_OUTDIR" \
     || ( rm -rf "$ACTUAL_OUTDIR" && exit 1 )
 
 (
+    tmp="$(mktemp)"
     cd /outdir-base
     {
         echo "$GIT_ARCHIVE"
         find "$ACTUAL_OUTDIR" -type f
     } | xargs realpath --relative-base="$PWD" \
-      | xargs sha256sum \
-      | sort -k2 \
-      | sponge "$ACTUAL_OUTDIR"/SHA256SUMS.part
+        | xargs sha256sum \
+        | sort -k2 \
+        > "$tmp";
+    mv "$tmp" "$ACTUAL_OUTDIR"/SHA256SUMS.part
 )
